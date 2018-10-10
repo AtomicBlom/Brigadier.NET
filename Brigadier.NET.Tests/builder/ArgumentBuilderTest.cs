@@ -50,7 +50,7 @@ namespace Brigadier.NET.Tests.builder
 			var target = Substitute.For<CommandNode<object>>(null, null, null, null, false);
 
 			_builder.Redirect(target);
-			_builder.Invoking(b => b.Then(c => c.Literal("foot")))
+			_builder.Invoking(b => b.Then(r => r.Literal("foot")))
 				.Should().Throw<InvalidOperationException>();
 		}
 

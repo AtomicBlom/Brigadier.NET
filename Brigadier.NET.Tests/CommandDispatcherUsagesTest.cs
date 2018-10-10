@@ -24,59 +24,59 @@ namespace Brigadier.NET.Tests
 
 			_subject.Register(
 				r => r.Literal("a")
-					.Then(c => 
-						c.Literal("1")
-							.Then(c.Literal("i").Executes(_command))
-							.Then(c.Literal("ii").Executes(_command))
+					.Then(
+						r.Literal("1")
+							.Then(r.Literal("i").Executes(_command))
+							.Then(r.Literal("ii").Executes(_command))
 					)
-					.Then(c =>
-						c.Literal("2")
-							.Then(c.Literal("i").Executes(_command))
-							.Then(c.Literal("ii").Executes(_command))
+					.Then(
+						r.Literal("2")
+							.Then(r.Literal("i").Executes(_command))
+							.Then(r.Literal("ii").Executes(_command))
 					)
 			);
-			_subject.Register(r => r.Literal("b").Then(c => c.Literal("1").Executes(_command)));
+			_subject.Register(r => r.Literal("b").Then(r.Literal("1").Executes(_command)));
 			_subject.Register(r => r.Literal("c").Executes(_command));
 			_subject.Register(r => r.Literal("d").Requires(s => false).Executes(_command));
 			_subject.Register(r => r.Literal("e")
 					.Executes(_command)
-					.Then(c => 
-						c.Literal("1")
+					.Then(
+						r.Literal("1")
 							.Executes(_command)
-							.Then(c.Literal("i").Executes(_command))
-							.Then(c.Literal("ii").Executes(_command))
+							.Then(r.Literal("i").Executes(_command))
+							.Then(r.Literal("ii").Executes(_command))
 					)
 			);
 			_subject.Register(r => 
 				r.Literal("f")
-					.Then(c =>
-						c.Literal("1")
-							.Then(c.Literal("i").Executes(_command))
-							.Then(c.Literal("ii").Executes(_command).Requires(s => false))
+					.Then(
+						r.Literal("1")
+							.Then(r.Literal("i").Executes(_command))
+							.Then(r.Literal("ii").Executes(_command).Requires(s => false))
 					)
-					.Then(c =>
-						c.Literal("2")
-							.Then(c.Literal("i").Executes(_command).Requires(s => false))
-							.Then(c.Literal("ii").Executes(_command))
+					.Then(
+						r.Literal("2")
+							.Then(r.Literal("i").Executes(_command).Requires(s => false))
+							.Then(r.Literal("ii").Executes(_command))
 					)
 			);
 			_subject.Register(r => 
 				r.Literal("g")
 					.Executes(_command)
-					.Then(c => c.Literal("1").Then(c.Literal("i").Executes(_command)))
+					.Then(r.Literal("1").Then(r.Literal("i").Executes(_command)))
 			);
 			_subject.Register(r => 
 				r.Literal("h")
 					.Executes(_command)
-					.Then(c => c.Literal("1").Then(c.Literal("i").Executes(_command)))
-					.Then(c => c.Literal("2").Then(c.Literal("i").Then(c.Literal("ii").Executes(_command))))
-					.Then(c => c.Literal("3").Executes(_command))
+					.Then(r.Literal("1").Then(r.Literal("i").Executes(_command)))
+					.Then(r.Literal("2").Then(r.Literal("i").Then(r.Literal("ii").Executes(_command))))
+					.Then(r.Literal("3").Executes(_command))
 			);
 			_subject.Register(r =>
 				r.Literal("i")
 					.Executes(_command)
-					.Then(c => c.Literal("1").Executes(_command))
-					.Then(c => c.Literal("2").Executes(_command))
+					.Then(r.Literal("1").Executes(_command))
+					.Then(r.Literal("2").Executes(_command))
 			);
 			_subject.Register(r =>
 				r.Literal("j")

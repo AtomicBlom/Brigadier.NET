@@ -92,9 +92,9 @@ namespace Brigadier.NET.Tests
 		public async Task getCompletionSuggestions_SubCommands(){
 			_subject.Register(r =>
 				r.Literal("parent")
-					.Then(c => c.Literal("foo"))
-					.Then(c => c.Literal("bar"))
-					.Then(c => c.Literal("baz"))
+					.Then(r.Literal("foo"))
+					.Then(r.Literal("bar"))
+					.Then(r.Literal("baz"))
 			);
 
 			var result = await _subject.GetCompletionSuggestions(_subject.Parse("parent ", _source));
@@ -107,9 +107,9 @@ namespace Brigadier.NET.Tests
 		public async Task getCompletionSuggestions_movingCursor_SubCommands(){
 			_subject.Register(r =>
 				r.Literal("parent_one")
-					.Then(c => c.Literal("faz"))
-					.Then(c => c.Literal("fbz"))
-					.Then(c => c.Literal("gaz"))
+					.Then(r.Literal("faz"))
+					.Then(r.Literal("fbz"))
+					.Then(r.Literal("gaz"))
 			);
 
 			_subject.Register(r =>
@@ -132,9 +132,9 @@ namespace Brigadier.NET.Tests
 		public async Task getCompletionSuggestions_SubCommands_partial(){
 			_subject.Register(r =>
 				r.Literal("parent")
-					.Then(c => c.Literal("foo"))
-					.Then(c => c.Literal("bar"))
-					.Then(c => c.Literal("baz"))
+					.Then(r.Literal("foo"))
+					.Then(r.Literal("bar"))
+					.Then(r.Literal("baz"))
 			);
 
 			var parse = _subject.Parse("parent b", _source);
@@ -148,9 +148,9 @@ namespace Brigadier.NET.Tests
 		public async Task getCompletionSuggestions_SubCommands_partial_withInputOffset(){
 			_subject.Register(r =>
 				r.Literal("parent")
-					.Then(c => c.Literal("foo"))
-					.Then(c => c.Literal("bar"))
-					.Then(c => c.Literal("baz"))
+					.Then(r.Literal("foo"))
+					.Then(r.Literal("bar"))
+					.Then(r.Literal("baz"))
 			);
 
 			var parse = _subject.Parse(InputWithOffset("junk parent b", 5), _source);
@@ -162,7 +162,7 @@ namespace Brigadier.NET.Tests
 
 		[Fact]
 		public async Task getCompletionSuggestions_redirect(){
-			var actual = _subject.Register(r => r.Literal("actual").Then(c => c.Literal("sub")));
+			var actual = _subject.Register(r => r.Literal("actual").Then(r.Literal("sub")));
 			_subject.Register(r => r.Literal("redirect").Redirect(actual));
 
 			var parse = _subject.Parse("redirect ", _source);
@@ -174,7 +174,7 @@ namespace Brigadier.NET.Tests
 
 		[Fact]
 		public async Task getCompletionSuggestions_redirectPartial(){
-			var actual = _subject.Register(r => r.Literal("actual").Then(c => c.Literal("sub")));
+			var actual = _subject.Register(r => r.Literal("actual").Then(r.Literal("sub")));
 			_subject.Register(r => r.Literal("redirect").Redirect(actual));
 
 			var parse = _subject.Parse("redirect s", _source);
@@ -187,9 +187,9 @@ namespace Brigadier.NET.Tests
 		[Fact]
 		public async Task getCompletionSuggestions_movingCursor_redirect(){
 			var actualOne = _subject.Register(r => r.Literal("actual_one")
-				.Then(c => c.Literal("faz"))
-				.Then(c => c.Literal("fbz"))
-				.Then(c => c.Literal("gaz"))
+				.Then(r.Literal("faz"))
+				.Then(r.Literal("fbz"))
+				.Then(r.Literal("gaz"))
 			);
 
 			_subject.Register(r => r.Literal("actual_two"));
@@ -210,7 +210,7 @@ namespace Brigadier.NET.Tests
 
 		[Fact]
 		public async Task getCompletionSuggestions_redirectPartial_withInputOffset(){
-			var actual = _subject.Register(r => r.Literal("actual").Then(c => c.Literal("sub")));
+			var actual = _subject.Register(r => r.Literal("actual").Then(r.Literal("sub")));
 			_subject.Register(r => r.Literal("redirect").Redirect(actual));
 
 			var parse = _subject.Parse(InputWithOffset("/redirect s", 1), _source);
@@ -226,10 +226,10 @@ namespace Brigadier.NET.Tests
 			var loop = _subject.Register(r => r.Literal("redirect"));
 			_subject.Register(r =>
 				r.Literal("redirect")
-					.Then(c => 
-						c.Literal("loop")
+					.Then(
+						r.Literal("loop")
 							.Then(
-								c.Argument("loop", Arguments.Integer())
+								r.Argument("loop", Arguments.Integer())
 									.Redirect(loop)
 							)
 					)
@@ -247,22 +247,22 @@ namespace Brigadier.NET.Tests
 			var execute = _subject.Register(r => r.Literal("execute"));
 			_subject.Register(r =>
 				r.Literal("execute")
-					.Then(c =>
-						c.Literal("as")
+					.Then(
+						r.Literal("as")
 							.Then(
-								c.Argument("name", Arguments.Word())
+								r.Argument("name", Arguments.Word())
 									.Redirect(execute)
 							)
 					)
-					.Then(c =>
-						c.Literal("store")
+					.Then(
+						r.Literal("store")
 							.Then(
-								c.Argument("name", Arguments.Word())
+								r.Argument("name", Arguments.Word())
 									.Redirect(execute)
 							)
 					)
-					.Then(c =>
-						c.Literal("run")
+					.Then(
+						r.Literal("run")
 							.Executes(e => 0)
 				)
 				);
@@ -279,20 +279,20 @@ namespace Brigadier.NET.Tests
 			var execute = _subject.Register(r => r.Literal("execute"));
 			_subject.Register(r =>
 				r.Literal("execute")
-					.Then(c =>
-						c.Literal("as")
-							.Then(c.Literal("bar").Redirect(execute))
-							.Then(c.Literal("baz").Redirect(execute))
+					.Then(
+						r.Literal("as")
+							.Then(r.Literal("bar").Redirect(execute))
+							.Then(r.Literal("baz").Redirect(execute))
 					)
-					.Then(c =>
-						c.Literal("store")
+					.Then(
+						r.Literal("store")
 							.Then(
-								c.Argument("name", Arguments.Word())
+								r.Argument("name", Arguments.Word())
 									.Redirect(execute)
 							)
 					)
-					.Then(c =>
-						c.Literal("run").Executes(e => 0)
+					.Then(
+						r.Literal("run").Executes(e => 0)
 				)
 				);
 

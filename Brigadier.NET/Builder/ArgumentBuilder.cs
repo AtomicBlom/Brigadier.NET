@@ -29,7 +29,7 @@ namespace Brigadier.NET.Builder
 			return This;
 		}
 
-		public TThis Then<TChildNode>(Func<IChildArgumentContext<TSource>, IArgumentBuilder<TSource, TChildNode>> argument) where TChildNode : CommandNode<TSource>
+		public TThis Then<TChildNode>(Func<IArgumentContext<TSource>, IArgumentBuilder<TSource, TChildNode>> argument) where TChildNode : CommandNode<TSource>
 		{
 			if (RedirectTarget != null)
 			{

@@ -33,11 +33,11 @@ namespace Brigadier.NET.Tests.tree
 			var node = GetCommandNode();
 
 			node.AddChild(LiteralArgumentBuilder<object>.LiteralArgument("child")
-				.Then(c => c.Literal("grandchild1"))
+				.Then(r => r.Literal("grandchild1"))
 				.Build());
 
 			node.AddChild(LiteralArgumentBuilder<object>.LiteralArgument("child")
-				.Then(c => c.Literal("grandchild2"))
+				.Then(r => r.Literal("grandchild2"))
 				.Build());
 
 			node.Children.Should().HaveCount(1);

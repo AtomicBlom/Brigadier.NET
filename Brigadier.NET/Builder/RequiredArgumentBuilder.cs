@@ -8,7 +8,7 @@ namespace Brigadier.NET.Builder
 	{
 		// ReSharper disable once UnusedParameter.Global
 		// context is used to infer generic parameters in API
-		public static RequiredArgumentBuilder<TSource, T> Argument<TSource, T>(this IChildArgumentContext<TSource> context, string name, ArgumentType<T> type)
+		public static RequiredArgumentBuilder<TSource, T> Argument<TSource, T>(this IArgumentContext<TSource> context, string name, ArgumentType<T> type)
 		{
 			return RequiredArgumentBuilder<TSource, T>.RequiredArgument(name, type);
 		}

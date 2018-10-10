@@ -38,8 +38,8 @@ namespace Brigadier.NET.Tests.builder
 
 		[Fact]
 		public void TestBuildWithChildren(){
-			_builder.Then(c => c.Argument("bar", Arguments.Integer()));
-			_builder.Then(c => c.Argument("baz", Arguments.Integer()));
+			_builder.Then(r => r.Argument("bar", Arguments.Integer()));
+			_builder.Then(r => r.Argument("baz", Arguments.Integer()));
 			var node = _builder.Build();
 
 			node.Children.Should().HaveCount(2);

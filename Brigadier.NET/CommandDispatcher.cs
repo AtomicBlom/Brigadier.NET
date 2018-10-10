@@ -90,7 +90,7 @@ namespace Brigadier.NET
 		 * @param command a literal argument builder to add to this command tree
 		 * @return the node added to this tree
 		 */
-		public LiteralCommandNode<TSource> Register(Func<IRootArgumentContext<TSource>, LiteralArgumentBuilder<TSource>> command)
+		public LiteralCommandNode<TSource> Register(Func<IArgumentContext<TSource>, LiteralArgumentBuilder<TSource>> command)
 		{
 			var build = command(default(ArgumentContext<TSource>)).Build();
 			_root.AddChild(build);

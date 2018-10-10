@@ -33,29 +33,6 @@ namespace Brigadier.NET.Tests
 			return result;
 		}
 
-        private class CommandSourceStack { }
-
-		[Fact]
-		public void TestReadMeExample()
-		{
-var dispatcher = new CommandDispatcher<CommandSourceStack>();
-
-dispatcher.Register(r =>
-	r.Literal("foo")
-		.Then(c =>
-			c.Argument("bar", Integer())
-				.Executes(e => {
-					Console.WriteLine("Bar is " + GetInteger(e, "bar"));
-					return 1;
-				})
-		)
-		.Executes(e => {
-			Console.WriteLine("Called foo with no arguments");
-			return 1;
-		})
-);
-		}
-
 		[Fact]
 		public void TestCreateAndExecuteCommand()
 		{
@@ -79,8 +56,8 @@ dispatcher.Register(r =>
 		[Fact]
 		public void TestCreateAndMergeCommands()
 		{
-			_subject.Register(r => r.Literal("base").Then(c => c.Literal("foo").Executes(_command)));
-			_subject.Register(r => r.Literal("base").Then(c => c.Literal("bar").Executes(_command)));
+			_subject.Register(r => r.Literal("base").Then(r.Literal("foo").Executes(_command)));
+			_subject.Register(r => r.Literal("base").Then(r.Literal("bar").Executes(_command)));
 
 			_subject.Execute("base foo", _source).Should().Be(42);
 			_subject.Execute("base bar", _source).Should().Be(42);
@@ -132,7 +109,7 @@ dispatcher.Register(r =>
 		[Fact]
 		public void TestExecuteIncorrectLiteral()
 		{
-			_subject.Register(r => r.Literal("foo").Executes(_command).Then(c => c.Literal("bar")));
+			_subject.Register(r => r.Literal("foo").Executes(_command).Then(r.Literal("bar")));
 			_subject.Invoking(s => s.Execute("foo baz", _source)).Should().Throw<CommandSyntaxException>()
 				.Where(ex => ex.Type == CommandSyntaxException.BuiltInExceptions.DispatcherUnknownArgument())
 				.Where(ex => ex.Cursor == 4);
@@ -143,8 +120,8 @@ dispatcher.Register(r =>
 		{
 			_subject.Register(r => 
 				r.Literal("foo").Executes(_command)
-					.Then(c => c.Literal("bar"))
-					.Then(c => c.Literal("baz"))
+					.Then(r.Literal("bar"))
+					.Then(r.Literal("baz"))
 			);
 			_subject.Invoking(s => s.Execute("foo unknown", _source)).Should().Throw<CommandSyntaxException>()
 				.Where(ex => ex.Type == CommandSyntaxException.BuiltInExceptions.DispatcherUnknownArgument())
@@ -173,7 +150,7 @@ dispatcher.Register(r =>
 		[Fact]
 		public void TestParseIncompleteLiteral()
 		{
-			_subject.Register(r => r.Literal("foo").Then(c => c.Literal("bar").Executes(_command)));
+			_subject.Register(r => r.Literal("foo").Then(r.Literal("bar").Executes(_command)));
 
 			var parse = _subject.Parse("foo ", _source);
 			parse.Reader.Remaining.Should().BeEquivalentTo(" ");
@@ -184,7 +161,7 @@ dispatcher.Register(r =>
 		[Fact]
 		public void TestParseIncompleteArgument()
 		{
-			_subject.Register(r => r.Literal("foo").Then(c => c.Argument("bar", Integer()).Executes(_command)));
+			_subject.Register(r => r.Literal("foo").Then(r.Argument("bar", Integer()).Executes(_command)));
 
 			var parse = _subject.Parse("foo ", _source);
 			parse.Reader.Remaining.Should().BeEquivalentTo(" ");
@@ -200,12 +177,12 @@ dispatcher.Register(r =>
 			_subject.Register(r => 
 				r.Literal("test")
 					.Then(
-						c => c.Argument("incorrect", Integer()).Executes(_command)
+						r.Argument("incorrect", Integer()).Executes(_command)
 					)
 					.Then(
-						c => c.Argument("right", Integer())
+						r.Argument("right", Integer())
 							.Then(
-								c.Argument("sub", Integer()).Executes(subCommand)
+								r.Argument("sub", Integer()).Executes(subCommand)
 							)
 					)
 			);
@@ -223,14 +200,14 @@ dispatcher.Register(r =>
 
 			var real = _subject.Register(r => 
 				r.Literal("test")
-					.Then(c=>  
-						c.Argument("incorrect", Integer())
+					.Then(
+						r.Argument("incorrect", Integer())
 							.Executes(_command)
 					)
-					.Then(c =>
-						c.Argument("right", Integer())
+					.Then(
+						r.Argument("right", Integer())
 							.Then(
-								c.Argument("sub", Integer())
+								r.Argument("sub", Integer())
 									.Executes(subCommand)
 							)
 					)
@@ -317,9 +294,7 @@ dispatcher.Register(r =>
 		[Fact]
 		public void TestExecuteOrphanedSubCommand()
 		{
-			_subject.Register(r => r.Literal("foo").Then(c =>
-				c.Argument("bar", Integer())
-			).Executes(_command));
+			_subject.Register(r => r.Literal("foo").Then(r.Argument("bar", Integer())).Executes(_command));
 
 			_subject.Invoking(s => s.Execute("foo 5", _source)).Should().Throw<CommandSyntaxException>()
 				.Where(ex => ex.Type == CommandSyntaxException.BuiltInExceptions.DispatcherUnknownCommand())
@@ -341,7 +316,7 @@ dispatcher.Register(r =>
 		[Fact]
 		public void parse_noSpaceSeparator()
 		{
-			_subject.Register(r => r.Literal("foo").Then(c => c.Argument("bar", Integer()).Executes(_command)));
+			_subject.Register(r => r.Literal("foo").Then(r.Argument("bar", Integer()).Executes(_command)));
 
 			_subject.Invoking(s => s.Execute("foo$", _source))
 				.Should().Throw<CommandSyntaxException>()
