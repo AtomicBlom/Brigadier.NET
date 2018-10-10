@@ -1,56 +1,20 @@
-# Brigadier [![Latest release](https://img.shields.io/github/release/Mojang/brigadier.svg)](https://github.com/Mojang/brigadier/releases/latest) [![License](https://img.shields.io/github/license/Mojang/brigadier.svg)](https://github.com/Mojang/brigadier/blob/master/LICENSE)
+# Brigadier [![Latest release](https://img.shields.io/github/release/atomicblom/Brigadier.NET.svg)](https://github.com/atomicblom/Brigadier.NET/releases/latest) [![License](https://img.shields.io/github/license/atomicblom/Brigadier.NET.svg)](https://github.com/atomicblom/Brigadier.NET/blob/master/LICENSE)
 
-Brigadier is a command parser & dispatcher, designed and developed for Minecraft: Java Edition and now freely available for use elsewhere under the MIT license.
+Brigadier.NET is a port of Mojang's [brigadier](https://github.com/mojang/brigadier) command line parser & dispatcher, originally for Minecraft: Java Edition and now freely available for use elsewhere under the MIT license.
+
+This port is not supported by Mojang or Microsoft. For any issues, please report to [AtomicBlom/Brigadier.NET](https://www.github.com/AtomicBlom/Brigadier.NET/issues)
 
 # Installation
-Brigadier is available to Maven & Gradle via `libraries.minecraft.net`. Its group is `com.mojang`, and artifact name is `brigadier`.
-
-## Gradle
-First include our repository:
-```groovy
-maven {
-    url "https://libraries.minecraft.net"
-}
-```
-
-And then use this library (change `(the latest version)` to the latest version!):
-```groovy
-compile 'com.mojang:brigadier:(the latest version)'
-```
-
-## Maven
-First include our repository:
-```xml
-<repository>
-  <id>minecraft-libraries</id>
-  <name>Minecraft Libraries</name>
-  <url>https://libraries.minecraft.net</url>
-</repository>
-```
-
-And then use this library (change `(the latest version)` to the latest version!):
-```xml
-<dependency>
-    <groupId>com.mojang</groupId>
-    <artifactId>brigadier</artifactId>
-    <version>(the latest version)</version>
-</dependency>
-```
+<!--Brigadier.NET is available from NuGet, install it via the [BrigadierNET](https://nuget.org/) NuGet package-->
+A NuGet Package will be provided shortly
 
 # Contributing
 Contributions are welcome ! :D
 
-Most contributions will require you to agree to a Contributor License Agreement (CLA) declaring that you have the right to,
-and actually do, grant us the rights to use your contribution. For details, visit https://cla.microsoft.com.
-
-This project has adopted the [Microsoft Open Source Code of Conduct](https://opensource.microsoft.com/codeofconduct/).
-For more information see the [Code of Conduct FAQ](https://opensource.microsoft.com/codeofconduct/faq/) or
-contact [opencode@microsoft.com](mailto:opencode@microsoft.com) with any additional questions or comments.
-
 # Usage
-At the heart of Brigadier, you need a `CommandDispatcher<S>`, where `<S>` is any custom object you choose to identify a "command source".
+At the heart of Brigadier, you need a `CommandDispatcher<TSource>`, where `<TSource>` is any custom object you choose to identify a "command source".
 
-A command dispatcher holds a "command tree", which are a series of `CommandNode` which represent the various possible syntax that form a valid command.
+A command dispatcher holds a "command tree", which are a series of `CommandNode<TSource>` which represent the various possible syntax that form a valid command.
 
 ## Registering a new command
 Before we can start parsing and dispatching commands, we need to build up our command tree. Every registration is an append operation,
@@ -59,23 +23,23 @@ so you can freely extend existing commands in a project without needing access t
 Command registration also encourages use of a builder pattern to keep code cruft to a minimum.
 
 A "command" is a fairly loose term, but typically it means an exit point of the command tree.
-Every node can have an `executes` function attached to it, which signifies that if the input stops here then this function will be called with the context so far.
+Every node can have an `Executes` method attached to it, which signifies that if the input stops here then this function will be called with the context so far.
 
 Consider the following example:
-```java
-CommandDispatcher<CommandSourceStack> dispatcher = new CommandDispatcher<>();
+```csharp
+var dispatcher = new CommandDispatcher<CommandSourceStack>();
 
-dispatcher.register(
-    literal("foo")
-        .then(
-            argument("bar", integer())
-                .executes(c -> {
-                    System.out.println("Bar is " + getInteger(c, "bar"));
+dispatcher.Register(l =>
+    l.Literal("foo")
+        .Then(a =>
+            a.Argument("bar", Arguments.Integer())
+                .Executes(c => {
+                    Console.WriteLine("Bar is " + Arguments.GetInteger(c, "bar"));
                     return 1;
                 })
         )
-        .executes(c -> {
-            System.out.println("Called foo with no arguments");
+        .Executes(c => {
+            Console.WriteLine("Called foo with no arguments");
             return 1;
         })
 );
@@ -85,7 +49,7 @@ This snippet registers two "commands": `foo` and `foo <bar>`. It is also common 
 
 At the start of the tree is a "root node", and it **must** have `LiteralCommandNode`s as children. Here, we register one command under the root: `literal("foo")`, which means "the user must type the literal string 'foo'".
 
-Under that is two extra definitions: a child node for possible further evaluation, or an `executes` block if the user input stops here.
+Under that is two extra definitions: a child node for possible further evaluation, or an `Executes` block if the user input stops here.
 
 The child node works exactly the same way, but is no longer limited to literals. The other type of node that is now allowed is an `ArgumentCommandNode`, which takes in a name and an argument type.
 
@@ -98,19 +62,19 @@ For example, an integer argument would parse "123" and store it as `123` (`int`)
 When a command is actually run, it can access these arguments in the context provided to the registered function.
 
 ## Parsing user input
-So, we've registered some commands and now we're ready to take in user input. If you're in a rush, you can just call `dispatcher.execute("foo 123", source)` and call it a day.
+So, we've registered some commands and now we're ready to take in user input. If you're in a rush, you can just call `dispatcher.Execute("foo 123", source)` and call it a day.
 
-The result of `execute` is an integer returned by the command it evaluated. Its meaning varies depending on command, and typically will not be useful to programmers.
+The result of `Execute` is an integer returned by the command it evaluated. Its meaning varies depending on command, and typically will not be useful to programmers.
 
-The `source` is an object of `<S>`, your own custom class to track users/players/etc. It will be provided to the command so that it has some context on what's happening.
+The `source` is an object of `<TSource>`, your own custom class to track users/players/etc. It will be provided to the command so that it has some context on what's happening.
 
-If the command failed or could not parse, some form of `CommandSyntaxException` will be thrown. It is also possible for a `RuntimeException` to be bubbled up, if not properly handled in a command.
+If the command failed or could not parse, some form of `CommandSyntaxException` will be thrown. It is also possible for other kinds of `Exception` to be bubbled up, if not properly handled in a command.
 
 If you wish to have more control over the parsing & executing of commands, or wish to cache the parse results so you can execute it multiple times, you can split it up into two steps:
 
-```java
-final ParseResults<S> parse = dispatcher.parse("foo 123", source);
-final int result = execute(parse);
+```csharp
+var parse = dispatcher.Parse("foo 123", source);
+var result = dispatcher.Execute(parse);
 ``` 
 
 This is highly recommended as the parse step is the most expensive, and may be easily cached depending on your application.
@@ -118,9 +82,9 @@ This is highly recommended as the parse step is the most expensive, and may be e
 You can also use this to do further introspection on a command, before (or without) actually running it.
 
 ## Inspecting a command
-If you `parse` some input, you can find out what it will perform (if anything) and provide hints to the user safely and immediately.
+If you `Parse` some input, you can find out what it will perform (if anything) and provide hints to the user safely and immediately.
 
-The parse will never fail, and the `ParseResults<S>` it returns will contain a *possible* context that a command may be called with
+The parse will never fail, and the `ParseResults<TSource>` it returns will contain a *possible* context that a command may be called with
 (and from that, you can inspect which nodes the user entered, complete with start/end positions in the input string).
 It also contains a map of parse exceptions for each command node it encountered. If it couldn't build a valid context, then
 the reason why is inside this exception map.
@@ -128,8 +92,76 @@ the reason why is inside this exception map.
 ## Displaying usage info
 There are two forms of "usage strings" provided by this library, both require a target node.
 
-`getAllUsage(node, source, restricted)`  will return a list of all possible commands (executable end-points) under the target node and their human readable path. If `restricted`, it will ignore commands that `source` does not have access to. This will look like [`foo`, `foo <bar>`]
+`GetAllUsage(node, source, restricted)`  will return a list of all possible commands (executable end-points) under the target node and their human readable path. If `restricted`, it will ignore commands that `source` does not have access to. This will look like [`foo`, `foo <bar>`]
 
-`getSmartUsage(node, source)` will return a map of the child nodes to their "smart usage" human readable path. This tries to squash future-nodes together and show optional & typed information, and can look like `foo (<bar>)`
+`GetSmartUsage(node, source)` will return a map of the child nodes to their "smart usage" human readable path. This tries to squash future-nodes together and show optional & typed information, and can look like `foo (<bar>)`
 
-![GitHub forks](https://img.shields.io/github/forks/Mojang/brigadier.svg?style=social&label=Fork) ![GitHub stars](https://img.shields.io/github/stars/Mojang/brigadier.svg?style=social&label=Stars)
+## Differences with Java Version
+The current version of Brigadier.NET is based on the source code of brigadier at this [commit](https://github.com/Mojang/brigadier/commit/7ee589b29b7c72c423c1549f1edcb5c89981291a)
+
+Changes have been made to bring the project to a more .NET feel, or to improve the simplicity of using the project in a .NET ecosystem
+
+### Registering commands
+.NET's Generics are limited in where it can infer type parameters from. We can make it easier to infer the type of TSource by providing a context in the form of a lambda.
+```
+var dispatcher = new CommandDispatcher<CommandSourceStack>();
+
+dispatcher.Register(l => l.Literal("foo"));
+```
+
+The lambda can also be used to get the TSource for many argument builders.
+
+```
+dispatcher.Register(l => 
+    l.Literal("foo")
+        .Then(
+            l.Argument("bar", Integer())
+        )
+);
+```
+
+Without the lambda, you will be forced to specify the generic type parameters manually.
+```
+dispatcher.Register(
+    LiteralArgumentBuilder<CommandSourceStack>.LiteralArgument("foo")
+        .Then(
+            RequiredArgumentBuilder<CommandSourceStack, int>.RequiredArgument("bar", Integer())
+        )
+);
+```
+
+### Arguments
+Arguments static methods have been renamed and moved to a single static class
+* com.mojang.brigadier.arguments.BoolArgumentType.bool() 
+  * -> Brigadier.NET.Arguments.Bool()
+* com.mojang.brigadier.arguments.DoubleArgumentType.doubleArg() 
+    * -> Brigadier.NET.Arguments.Double()
+* com.mojang.brigadier.arguments.FloatArgumentType.floatArg() 
+    * -> Brigadier.NET.Arguments.Float()
+* com.mojang.brigadier.arguments.IntegerArgumentType.integer() 
+    * -> Brigadier.NET.Arguments.Integer()
+* com.mojang.brigadier.arguments.LongArgumentType.longArg() 
+    * -> Brigadier.NET.Arguments.Long()
+* com.mojang.brigadier.arguments.StringArgumentType.word() 
+    * -> Brigadier.NET.Arguments.Word()
+* com.mojang.brigadier.arguments.StringArgumentType.string()
+    * -> Brigadier.NET.Arguments.String()
+* com.mojang.brigadier.arguments.StringArgumentType.greedyString()
+    * -> Brigadier.NET.Arguments.GreedyString()
+
+You can import arguments easier in .NET by importing the static members of `Brigadier.NET.Arguments`
+```csharp
+using static Brigadier.NET.Arguments
+
+...
+
+dispatcher.Register(
+    l => l.Literal("foo")
+        .Then(a => a.Argument("bar", Integer()))
+        .Then(a => a.Argument("fizz", Word()))
+        .Then(a => a.Argument("buzz", Boolean()))
+);
+
+```
+
+![GitHub forks](https://img.shields.io/github/forks/AtomicBlom/Brigadier.NET.svg?style=social&label=Fork) ![GitHub stars](https://img.shields.io/github/stars/AtomicBlom/Brigadier.NET.svg?style=social&label=Stars)
