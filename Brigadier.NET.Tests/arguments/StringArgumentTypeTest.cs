@@ -24,7 +24,7 @@ namespace Brigadier.NET.Tests.arguments
 		public void TestParseString(){
 			var reader = Substitute.For<IStringReader>();
 			reader.ReadString().Returns("hello world");
-			Arguments.Phrase().Parse(reader).Should().BeEquivalentTo("hello world");
+			Arguments.String().Parse(reader).Should().BeEquivalentTo("hello world");
 			reader.Received().ReadString();
 		}
 
@@ -37,7 +37,7 @@ namespace Brigadier.NET.Tests.arguments
 
 		[Fact]
 		public void TestToString(){
-			Arguments.Phrase().ToString().Should().BeEquivalentTo("string()");
+			Arguments.String().ToString().Should().BeEquivalentTo("string()");
 		}
 
 		[Fact]

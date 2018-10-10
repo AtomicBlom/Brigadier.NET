@@ -61,7 +61,7 @@ namespace Brigadier.NET
 			return new StringArgumentType(StringArgType.SingleWord);
 		}
 
-		public static StringArgumentType Phrase()
+		public static StringArgumentType String()
 		{
 			return new StringArgumentType(StringArgType.QuotablePhrase);
 		}
