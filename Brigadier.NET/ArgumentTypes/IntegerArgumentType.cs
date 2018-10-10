@@ -1,27 +1,16 @@
 ﻿using System.Collections.Generic;
-using Brigadier.NET.Context;
 using Brigadier.NET.Exceptions;
 
-namespace Brigadier.NET.Arguments
+namespace Brigadier.NET.ArgumentTypes
 {
 	public class IntegerArgumentType : ArgumentType<int>
 	{
 		private static readonly IEnumerable<string> IntegerExamples = new [] {"0", "123", "-123"};
 
-		private IntegerArgumentType(int minimum, int maximum)
+		internal IntegerArgumentType(int minimum, int maximum)
 		{
 			Minimum = minimum;
 			Maximum = maximum;
-		}
-
-		public static IntegerArgumentType Integer(int min = int.MinValue, int max = int.MaxValue)
-		{
-			return new IntegerArgumentType(min, max);
-		}
-
-		public static int GetInteger<TSource>(CommandContext<TSource> context, string name)
-		{
-			return context.GetArgument<int>(name);
 		}
 
 		public int Minimum { get; }

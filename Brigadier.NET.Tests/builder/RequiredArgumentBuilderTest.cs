@@ -1,7 +1,7 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT license.
 
-using Brigadier.NET.Arguments;
+using Brigadier.NET.ArgumentTypes;
 using Brigadier.NET.Builder;
 using FluentAssertions;
 using NSubstitute;
@@ -38,8 +38,8 @@ namespace Brigadier.NET.Tests.builder
 
 		[Fact]
 		public void TestBuildWithChildren(){
-			_builder.Then(c => c.Argument("bar", IntegerArgumentType.Integer()));
-			_builder.Then(c => c.Argument("baz", IntegerArgumentType.Integer()));
+			_builder.Then(c => c.Argument("bar", Arguments.Integer()));
+			_builder.Then(c => c.Argument("baz", Arguments.Integer()));
 			var node = _builder.Build();
 
 			node.Children.Should().HaveCount(2);

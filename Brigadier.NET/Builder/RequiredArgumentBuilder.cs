@@ -1,4 +1,4 @@
-﻿using Brigadier.NET.Arguments;
+﻿using Brigadier.NET.ArgumentTypes;
 using Brigadier.NET.Suggestion;
 using Brigadier.NET.Tree;
 

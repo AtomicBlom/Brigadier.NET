@@ -1,7 +1,7 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT license.
 
-using Brigadier.NET.Arguments;
+using Brigadier.NET.ArgumentTypes;
 using FluentAssertions;
 using NSubstitute;
 using Xunit;
@@ -15,7 +15,7 @@ namespace Brigadier.NET.Tests.arguments
 		{
 			var reader = Substitute.For<IStringReader>();
 			reader.ReadUnquotedString().Returns("hello");
-			StringArgumentType.Word().Parse(reader).Should().BeEquivalentTo("hello");
+			Arguments.Word().Parse(reader).Should().BeEquivalentTo("hello");
 
 			reader.Received().ReadUnquotedString();
 		}
@@ -24,20 +24,20 @@ namespace Brigadier.NET.Tests.arguments
 		public void TestParseString(){
 			var reader = Substitute.For<IStringReader>();
 			reader.ReadString().Returns("hello world");
-			StringArgumentType.Phrase().Parse(reader).Should().BeEquivalentTo("hello world");
+			Arguments.Phrase().Parse(reader).Should().BeEquivalentTo("hello world");
 			reader.Received().ReadString();
 		}
 
 		[Fact]
 		public void TestParseGreedyString(){
 			var reader = new StringReader("Hello world! This is a test.");
-			StringArgumentType.GreedyString().Parse(reader).Should().BeEquivalentTo("Hello world! This is a test.");
+			Arguments.GreedyString().Parse(reader).Should().BeEquivalentTo("Hello world! This is a test.");
 			reader.CanRead().Should().Be(false);
 		}
 
 		[Fact]
 		public void TestToString(){
-			StringArgumentType.Phrase().ToString().Should().BeEquivalentTo("string()");
+			Arguments.Phrase().ToString().Should().BeEquivalentTo("string()");
 		}
 
 		[Fact]

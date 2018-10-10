@@ -2,27 +2,17 @@
 using Brigadier.NET.Context;
 using Brigadier.NET.Exceptions;
 
-namespace Brigadier.NET.Arguments
+namespace Brigadier.NET.ArgumentTypes
 {
 	public class LongArgumentType : ArgumentType<long>
 	{
 		private static readonly IEnumerable<string> LongExamples = new [] {"0", "123", "-123"};
 
-		private LongArgumentType(long minimum, long maximum)
+		internal LongArgumentType(long minimum, long maximum)
 		{
 			Minimum = minimum;
 			Maximum = maximum;
 		}
-
-		public static LongArgumentType LongArg(long min = long.MinValue, long max = long.MaxValue)
-		{
-			return new LongArgumentType(min, max);
-		}
-
-		public static long GetLong<TSource>(CommandContext<TSource> context, string name)
-		{
-			return context.GetArgument<long>(name);
-	    }
 
 		public long Minimum { get; }
 

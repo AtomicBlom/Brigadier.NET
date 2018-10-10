@@ -2,7 +2,6 @@
 // Licensed under the MIT license.
 
 using System;
-using Brigadier.NET.Arguments;
 using Brigadier.NET.Builder;
 using Brigadier.NET.Tree;
 using FluentAssertions;
@@ -22,7 +21,7 @@ namespace Brigadier.NET.Tests.builder
 		[Fact]
 		public void TestArguments()
 		{
-			var argument = RequiredArgumentBuilder<object, int>.RequiredArgument("bar", IntegerArgumentType.Integer());
+			var argument = RequiredArgumentBuilder<object, int>.RequiredArgument("bar", Arguments.Integer());
 
 			_builder.Then(argument);
 

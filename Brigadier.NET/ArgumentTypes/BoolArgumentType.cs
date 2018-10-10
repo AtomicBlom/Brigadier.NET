@@ -3,24 +3,14 @@ using System.Threading.Tasks;
 using Brigadier.NET.Context;
 using Brigadier.NET.Suggestion;
 
-namespace Brigadier.NET.Arguments
+namespace Brigadier.NET.ArgumentTypes
 {
 	public class BoolArgumentType : ArgumentType<bool>
 	{
 		private static readonly IEnumerable<string> BoolExamples = new[] {"true", "false"};
 
-		private BoolArgumentType()
+		internal BoolArgumentType()
 		{
-		}
-
-		public static BoolArgumentType Bool()
-		{
-			return new BoolArgumentType();
-		}
-
-		public static bool GetBool<TSource>(CommandContext<TSource> context, string name)
-		{
-			return context.GetArgument<bool>(name);
 		}
 
 		public override bool Parse(IStringReader reader)

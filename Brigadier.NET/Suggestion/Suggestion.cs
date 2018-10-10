@@ -76,7 +76,7 @@ namespace Brigadier.NET.Suggestion
 
 		public virtual int CompareToIgnoreCase(Suggestion b)
 		{
-			return string.Compare(Text, b.Text, StringComparison.InvariantCultureIgnoreCase);
+			return string.Compare(Text, b.Text, StringComparison.OrdinalIgnoreCase);
 		}
 
 		public Suggestion Expand(string command, StringRange range)

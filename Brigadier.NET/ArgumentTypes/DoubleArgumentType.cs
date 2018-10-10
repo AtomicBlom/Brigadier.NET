@@ -3,26 +3,16 @@ using System.Diagnostics.CodeAnalysis;
 using Brigadier.NET.Context;
 using Brigadier.NET.Exceptions;
 
-namespace Brigadier.NET.Arguments
+namespace Brigadier.NET.ArgumentTypes
 {
 	public class DoubleArgumentType : ArgumentType<double>
 	{
 		private static readonly IEnumerable<string> DoubleExamples = new [] {"0", "1.2", ".5", "-1", "-.5", "-1234.56"};
 
-		private DoubleArgumentType(double minimum, double maximum)
+		internal DoubleArgumentType(double minimum, double maximum)
 		{
 			Minimum = minimum;
 			Maximum = maximum;
-		}
-
-		public static DoubleArgumentType DoubleArg(double min = -double.MaxValue, double max = double.MaxValue)
-		{
-			return new DoubleArgumentType(min, max);
-		}
-
-		public static double GetDouble<TSource>(CommandContext<TSource> context, string name)
-		{
-			return context.GetArgument<double>(name);
 		}
 
 		public double Minimum { get; }

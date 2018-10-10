@@ -1,11 +1,13 @@
-﻿using System.Collections.Generic;
-using Brigadier.NET.Arguments;
+﻿using System;
+using System.Collections.Generic;
 using Brigadier.NET.Builder;
 using Brigadier.NET.Context;
 using Brigadier.NET.Exceptions;
 using FluentAssertions;
 using NSubstitute;
 using Xunit;
+
+using static Brigadier.NET.Arguments;
 
 namespace Brigadier.NET.Tests
 {
@@ -29,6 +31,29 @@ namespace Brigadier.NET.Tests
 				Cursor = offset
 			};
 			return result;
+		}
+
+        private class CommandSourceStack { }
+
+		[Fact]
+		public void TestReadMeExample()
+		{
+var dispatcher = new CommandDispatcher<CommandSourceStack>();
+
+dispatcher.Register(r =>
+	r.Literal("foo")
+		.Then(c =>
+			c.Argument("bar", Integer())
+				.Executes(e => {
+					Console.WriteLine("Bar is " + GetInteger(e, "bar"));
+					return 1;
+				})
+		)
+		.Executes(e => {
+			Console.WriteLine("Called foo with no arguments");
+			return 1;
+		})
+);
 		}
 
 		[Fact]
@@ -159,7 +184,7 @@ namespace Brigadier.NET.Tests
 		[Fact]
 		public void TestParseIncompleteArgument()
 		{
-			_subject.Register(r => r.Literal("foo").Then(c => c.Argument("bar", IntegerArgumentType.Integer()).Executes(_command)));
+			_subject.Register(r => r.Literal("foo").Then(c => c.Argument("bar", Integer()).Executes(_command)));
 
 			var parse = _subject.Parse("foo ", _source);
 			parse.Reader.Remaining.Should().BeEquivalentTo(" ");
@@ -175,12 +200,12 @@ namespace Brigadier.NET.Tests
 			_subject.Register(r => 
 				r.Literal("test")
 					.Then(
-						c => c.Argument("incorrect", IntegerArgumentType.Integer()).Executes(_command)
+						c => c.Argument("incorrect", Integer()).Executes(_command)
 					)
 					.Then(
-						c => c.Argument("right", IntegerArgumentType.Integer())
+						c => c.Argument("right", Integer())
 							.Then(
-								c.Argument("sub", IntegerArgumentType.Integer()).Executes(subCommand)
+								c.Argument("sub", Integer()).Executes(subCommand)
 							)
 					)
 			);
@@ -199,13 +224,13 @@ namespace Brigadier.NET.Tests
 			var real = _subject.Register(r => 
 				r.Literal("test")
 					.Then(c=>  
-						c.Argument("incorrect", IntegerArgumentType.Integer())
+						c.Argument("incorrect", Integer())
 							.Executes(_command)
 					)
 					.Then(c =>
-						c.Argument("right", IntegerArgumentType.Integer())
+						c.Argument("right", Integer())
 							.Then(
-								c.Argument("sub", IntegerArgumentType.Integer())
+								c.Argument("sub", Integer())
 									.Executes(subCommand)
 							)
 					)
@@ -293,7 +318,7 @@ namespace Brigadier.NET.Tests
 		public void TestExecuteOrphanedSubCommand()
 		{
 			_subject.Register(r => r.Literal("foo").Then(c =>
-				c.Argument("bar", IntegerArgumentType.Integer())
+				c.Argument("bar", Integer())
 			).Executes(_command));
 
 			_subject.Invoking(s => s.Execute("foo 5", _source)).Should().Throw<CommandSyntaxException>()
@@ -316,7 +341,7 @@ namespace Brigadier.NET.Tests
 		[Fact]
 		public void parse_noSpaceSeparator()
 		{
-			_subject.Register(r => r.Literal("foo").Then(c => c.Argument("bar", IntegerArgumentType.Integer()).Executes(_command)));
+			_subject.Register(r => r.Literal("foo").Then(c => c.Argument("bar", Integer()).Executes(_command)));
 
 			_subject.Invoking(s => s.Execute("foo$", _source))
 				.Should().Throw<CommandSyntaxException>()
@@ -327,7 +352,7 @@ namespace Brigadier.NET.Tests
 		[Fact]
 		public void TestExecuteInvalidSubCommand()
 		{
-			_subject.Register(r => r.Literal("foo").Then(c => c.Argument("bar", IntegerArgumentType.Integer())).Executes(_command));
+			_subject.Register(r => r.Literal("foo").Then(c => c.Argument("bar", Integer())).Executes(_command));
 
 			_subject.Invoking(s => s.Execute("foo bar", _source))
 				.Should().Throw<CommandSyntaxException>()

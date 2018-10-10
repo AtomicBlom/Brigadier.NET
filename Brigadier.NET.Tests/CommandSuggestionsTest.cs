@@ -3,7 +3,6 @@
 
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Brigadier.NET.Arguments;
 using Brigadier.NET.Builder;
 using Brigadier.NET.Context;
 using FluentAssertions;
@@ -230,7 +229,7 @@ namespace Brigadier.NET.Tests
 					.Then(c => 
 						c.Literal("loop")
 							.Then(
-								c.Argument("loop", IntegerArgumentType.Integer())
+								c.Argument("loop", Arguments.Integer())
 									.Redirect(loop)
 							)
 					)
@@ -251,14 +250,14 @@ namespace Brigadier.NET.Tests
 					.Then(c =>
 						c.Literal("as")
 							.Then(
-								c.Argument("name", StringArgumentType.Word())
+								c.Argument("name", Arguments.Word())
 									.Redirect(execute)
 							)
 					)
 					.Then(c =>
 						c.Literal("store")
 							.Then(
-								c.Argument("name", StringArgumentType.Word())
+								c.Argument("name", Arguments.Word())
 									.Redirect(execute)
 							)
 					)
@@ -288,7 +287,7 @@ namespace Brigadier.NET.Tests
 					.Then(c =>
 						c.Literal("store")
 							.Then(
-								c.Argument("name", StringArgumentType.Word())
+								c.Argument("name", Arguments.Word())
 									.Redirect(execute)
 							)
 					)

@@ -3,44 +3,24 @@ using System.Text;
 using Brigadier.NET.Context;
 using Brigadier.NET.Exceptions;
 
-namespace Brigadier.NET.Arguments
+namespace Brigadier.NET.ArgumentTypes
 {
 	public class StringArgumentType : ArgumentType<string> {
-		private StringArgumentType(StringType type)
+		internal StringArgumentType(StringArgType type)
 		{
 			Type = type;
 		}
 
-		public static StringArgumentType Word()
-		{
-			return new StringArgumentType(StringType.SingleWord);
-		}
-
-		public static StringArgumentType Phrase()
-		{
-	        return new StringArgumentType(StringType.QuotablePhrase);
-		}	
-
-		public static StringArgumentType GreedyString()
-		{
-			return new StringArgumentType(StringType.GreedyPhrase);
-		}
-
-		public static string GetString<TSource>(CommandContext<TSource> context, string name)
-		{
-			return context.GetArgument<string>(name);
-	    }
-
-		public StringType Type { get; }
+		public StringArgType Type { get; }
 
 		/// <exception cref="CommandSyntaxException" />
 		public override string Parse(IStringReader reader)
 		{
-	        if (Type == StringType.GreedyPhrase) {
+	        if (Type == StringArgType.GreedyPhrase) {
 				var text = reader.Remaining;
 				reader.Cursor = reader.TotalLength;
 				return text;
-			} else if (Type == StringType.SingleWord) {
+			} else if (Type == StringArgType.SingleWord) {
 				return reader.ReadUnquotedString();
 			} else {
 				return reader.ReadString();
@@ -84,18 +64,11 @@ namespace Brigadier.NET.Arguments
 			return result.ToString();
 		}
 
-		public enum StringType
+		private static readonly Dictionary<StringArgType, IEnumerable<string>> StringExamples = new Dictionary<StringArgType, IEnumerable<string>>
 		{
-			SingleWord,
-			QuotablePhrase,
-			GreedyPhrase
-		}
-
-		private static readonly Dictionary<StringType, IEnumerable<string>> StringExamples = new Dictionary<StringType, IEnumerable<string>>
-		{
-			{ StringType.SingleWord, new [] { "word", "words_with_underscores" } },
-			{ StringType.QuotablePhrase, new [] {"\"quoted phrase\"", "word", "\"\""}},
-			{ StringType.GreedyPhrase, new [] {"word", "words with spaces", "\"and symbols\""}}
+			{ StringArgType.SingleWord, new [] { "word", "words_with_underscores" } },
+			{ StringArgType.QuotablePhrase, new [] {"\"quoted phrase\"", "word", "\"\""}},
+			{ StringArgType.GreedyPhrase, new [] {"word", "words with spaces", "\"and symbols\""}}
 		};
 	}
 }

@@ -2,7 +2,6 @@
 // Licensed under the MIT license.
 
 using System.Threading.Tasks;
-using Brigadier.NET.Arguments;
 using Brigadier.NET.Builder;
 using Brigadier.NET.Context;
 using Brigadier.NET.Suggestion;
@@ -23,7 +22,7 @@ namespace Brigadier.NET.Tests.tree
 
 		public ArgumentCommandNodeTest()
 		{
-			_node = RequiredArgumentBuilder<object, int>.RequiredArgument("foo", IntegerArgumentType.Integer()).Build();
+			_node = RequiredArgumentBuilder<object, int>.RequiredArgument("foo", Arguments.Integer()).Build();
 			_contextBuilder = new CommandContextBuilder<object>(new CommandDispatcher<object>(), new object(), new RootCommandNode<object>(), 0);
 		}
 
@@ -53,27 +52,27 @@ namespace Brigadier.NET.Tests.tree
 
 			new EqualsTester()
 				.AddEqualityGroup(
-					RequiredArgumentBuilder<object, int>.RequiredArgument("foo", IntegerArgumentType.Integer()).Build(),
-					RequiredArgumentBuilder<object, int>.RequiredArgument("foo", IntegerArgumentType.Integer()).Build()
+					RequiredArgumentBuilder<object, int>.RequiredArgument("foo", Arguments.Integer()).Build(),
+					RequiredArgumentBuilder<object, int>.RequiredArgument("foo", Arguments.Integer()).Build()
 				)
 				.AddEqualityGroup(
-					RequiredArgumentBuilder<object, int>.RequiredArgument("foo", IntegerArgumentType.Integer()).Executes(command).Build(),
-					RequiredArgumentBuilder<object, int>.RequiredArgument("foo", IntegerArgumentType.Integer()).Executes(command).Build()
+					RequiredArgumentBuilder<object, int>.RequiredArgument("foo", Arguments.Integer()).Executes(command).Build(),
+					RequiredArgumentBuilder<object, int>.RequiredArgument("foo", Arguments.Integer()).Executes(command).Build()
 				)
 				.AddEqualityGroup(
-					RequiredArgumentBuilder<object, int>.RequiredArgument("bar", IntegerArgumentType.Integer(-100, 100)).Build(),
-					RequiredArgumentBuilder<object, int>.RequiredArgument("bar", IntegerArgumentType.Integer(-100, 100)).Build()
+					RequiredArgumentBuilder<object, int>.RequiredArgument("bar", Arguments.Integer(-100, 100)).Build(),
+					RequiredArgumentBuilder<object, int>.RequiredArgument("bar", Arguments.Integer(-100, 100)).Build()
 				)
 				.AddEqualityGroup(
-					RequiredArgumentBuilder<object, int>.RequiredArgument("foo", IntegerArgumentType.Integer(-100, 100)).Build(),
-					RequiredArgumentBuilder<object, int>.RequiredArgument("foo", IntegerArgumentType.Integer(-100, 100)).Build()
+					RequiredArgumentBuilder<object, int>.RequiredArgument("foo", Arguments.Integer(-100, 100)).Build(),
+					RequiredArgumentBuilder<object, int>.RequiredArgument("foo", Arguments.Integer(-100, 100)).Build()
 				)
 				.AddEqualityGroup(
-					RequiredArgumentBuilder<object, int>.RequiredArgument("foo", IntegerArgumentType.Integer()).Then(
-						RequiredArgumentBuilder<object, int>.RequiredArgument("bar", IntegerArgumentType.Integer())
+					RequiredArgumentBuilder<object, int>.RequiredArgument("foo", Arguments.Integer()).Then(
+						RequiredArgumentBuilder<object, int>.RequiredArgument("bar", Arguments.Integer())
 					).Build(),
-					RequiredArgumentBuilder<object, int>.RequiredArgument("foo", IntegerArgumentType.Integer()).Then(
-						RequiredArgumentBuilder<object, int>.RequiredArgument("bar", IntegerArgumentType.Integer())
+					RequiredArgumentBuilder<object, int>.RequiredArgument("foo", Arguments.Integer()).Then(
+						RequiredArgumentBuilder<object, int>.RequiredArgument("bar", Arguments.Integer())
 					).Build()
 				)
 				.TestEquals();

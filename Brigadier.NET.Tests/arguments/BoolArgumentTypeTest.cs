@@ -1,7 +1,7 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT license.
 
-using Brigadier.NET.Arguments;
+using Brigadier.NET.ArgumentTypes;
 using FluentAssertions;
 using NSubstitute;
 using Xunit;
@@ -13,7 +13,7 @@ namespace Brigadier.NET.Tests.arguments
 
 		public BoolArgumentTypeTest()
 		{
-			_type = BoolArgumentType.Bool();
+			_type = Arguments.Bool();
 		}
 
 		[Fact]

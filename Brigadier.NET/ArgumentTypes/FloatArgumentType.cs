@@ -3,7 +3,7 @@ using System.Diagnostics.CodeAnalysis;
 using Brigadier.NET.Context;
 using Brigadier.NET.Exceptions;
 
-namespace Brigadier.NET.Arguments
+namespace Brigadier.NET.ArgumentTypes
 {
 	public class FloatArgumentType : ArgumentType<float>
 	{
@@ -12,20 +12,10 @@ namespace Brigadier.NET.Arguments
 		private readonly float _minimum;
 		private readonly float _maximum;
 
-		private FloatArgumentType(float minimum, float maximum)
+		internal FloatArgumentType(float minimum, float maximum)
 		{
 			_minimum = minimum;
 			_maximum = maximum;
-		}
-
-		public static FloatArgumentType FloatArg(float min = -float.MaxValue, float max = float.MaxValue)
-		{
-			return new FloatArgumentType(min, max);
-		}
-
-		public static float GetFloat<TSource>(CommandContext<TSource> context, string name)
-		{
-			return context.GetArgument<float>(name);
 		}
 
 		public float Minimum() => _minimum;
