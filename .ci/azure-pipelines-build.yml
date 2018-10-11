@@ -1,0 +1,89 @@
+
+parameters:
+  majorVersion: ''
+  minorVersion: ''
+
+jobs:
+  - job: Build
+    pool:
+      vmImage: 'Ubuntu 16.04'
+
+    variables:
+      revision: $[counter('release-number', 0)]
+      betaPackageVersion: $(majorVersion).$(minorVersion).$(revision)-beta
+      releasePackageVersion: $(majorVersion).$(minorVersion).$(revision)
+
+    steps:
+    - bash: |
+        if [ -z "$MAJORVERSION" ]; then
+          echo ##vso[task.complete result=Failed;]Missing template parameter \"majorVersion\"
+        fi
+        if [ -z "$MINORVERSION" ]; then
+          echo ##vso[task.complete result=Failed;]Missing template parameter \"minorVersion\"
+        fi
+      env:
+        MAJORVERSION: ${{ parameters.solution }}
+        MINORVERSION: ${{ parameters.solution }}
+      displayName: Check for required parameters
+
+    - task: PowerShell@2
+      inputs:
+        filePath: .ci/verify-version-updated.ps1
+      displayName: Verify version was bumped
+      condition: eq(variables['RequireVersionBump'], 'True')
+      
+    - powershell: |
+        $var = (gci env:*).GetEnumerator() | Sort-Object Name
+        $out = ""
+        Foreach ($v in $var) {$out = $out + "`t{0,-28} = {1,-28}`n" -f $v.Name, $v.Value}
+        
+        $fileName = "$env:BUILD_ARTIFACTSTAGINGDIRECTORY/variables.md"
+        write-output "dump variables on $fileName"
+        
+        set-content $fileName $out
+        
+        write-output "##vso[task.addattachment type=Distributedtask.Core.Summary;name=Environment Variables;]$fileName"
+      displayName: Dump Variables
+      condition: eq(variables['system.debug'], 'true')
+
+    - script: dotnet build --configuration $(buildConfiguration)
+      displayName: 'Compile $(buildConfiguration) Build'
+
+    - task: DotNetCoreCLI@2
+      displayName: 'Run Unit Tests'
+      inputs:
+        command: test
+        projects: '**/*Tests/*.csproj'
+        arguments: '--logger:trx --configuration $(buildConfiguration)'
+
+    - task: DotNetCoreCLI@2
+      displayName: 'Create NuGet Package - Beta'
+      inputs:
+        command: pack
+        arguments: '--configuration $(buildConfiguration)'
+        packagesToPack: 'Brigadier.NET/Brigadier.NET.csproj'
+        packDirectory: '$(build.artifactStagingDirectory)/beta'
+        versioningScheme: byEnvVar
+        versionEnvVar: betaPackageVersion
+      condition: and(succeeded(), eq(variables['CreateArtifacts'], 'True'))
+
+    - task: DotNetCoreCLI@2
+      displayName: 'Create NuGet Package - Release'
+      inputs:
+        command: pack
+        arguments: '--configuration $(buildConfiguration)'
+        packagesToPack: 'Brigadier.NET/Brigadier.NET.csproj'
+        packDirectory: '$(build.artifactStagingDirectory)/release'
+        versioningScheme: byEnvVar
+        versionEnvVar: releasePackageVersion
+      condition: and(succeeded(), eq(variables['CreateArtifacts'], 'True'))
+
+    - powershell: |       
+        $fileName = "$env:BUILD_ARTIFACTSTAGINGDIRECTORY/BuildVersion"        
+        $env:RELEASEPACKAGEVERSION > $filename
+      displayName: Write build version to artifacts
+      condition: and(succeeded(), eq(variables['CreateArtifacts'], 'True'))
+
+    - task: PublishBuildArtifacts@1
+      displayName: 'Publish Build Artifacts to VSTS'
+      condition: and(succeeded(), eq(variables['CreateArtifacts'], 'True'))

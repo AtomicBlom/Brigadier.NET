@@ -1,4 +1,4 @@
-# Brigadier [![Latest release](https://img.shields.io/github/release/atomicblom/Brigadier.NET.svg)](https://github.com/atomicblom/Brigadier.NET/releases/latest) [![License](https://img.shields.io/github/license/atomicblom/Brigadier.NET.svg)](https://github.com/atomicblom/Brigadier.NET/blob/master/LICENSE)
+# Brigadier [![Build Status](https://dev.azure.com/atomicblom/Brigadier.NET/_apis/build/status/Master%20Build)](https://dev.azure.com/atomicblom/Brigadier.NET/_build/latest?definitionId=3) [![Latest release](https://img.shields.io/github/release/atomicblom/Brigadier.NET.svg)](https://github.com/atomicblom/Brigadier.NET/releases/latest) [![License](https://img.shields.io/github/license/atomicblom/Brigadier.NET.svg)](https://github.com/atomicblom/Brigadier.NET/blob/master/LICENSE)
 
 Brigadier.NET is a port of Mojang's [brigadier](https://github.com/mojang/brigadier) command line parser & dispatcher, originally for Minecraft: Java Edition and now freely available for use elsewhere under the MIT license.
 

@@ -4,16 +4,14 @@
     <TargetFramework>netstandard1.1</TargetFramework>
     <AssemblyName>Brigadier.NET</AssemblyName>
     <LangVersion>latest</LangVersion>
-    <Version>0.1.0</Version>
     <Authors>Steven Blom</Authors>
     <Description>Brigadier.NET is a port of Mojang's brigadier command line parser &amp; dispatcher, originally for Minecraft: Java Edition and now freely available for use elsewhere under the MIT license.
 
-This port is not supported by Mojang or Microsoft. For any issues, please report to AtomicBlom/Brigadier.NET</Description>
+This port is not supported by Mojang or Microsoft.</Description>
     <PackageLicenseUrl>https://github.com/AtomicBlom/Brigadier.NET/blob/master/LICENSE</PackageLicenseUrl>
     <PackageProjectUrl>https://github.com/AtomicBlom/Brigadier.NET</PackageProjectUrl>
     <RepositoryUrl>https://github.com/AtomicBlom/Brigadier.NET</RepositoryUrl>
     <PackageTags>Brigadier command line parser dispatcher</PackageTags>
-    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
   </PropertyGroup>
 
   <ItemGroup>
