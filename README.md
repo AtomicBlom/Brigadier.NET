@@ -4,9 +4,23 @@ Brigadier.NET is a port of Mojang's [brigadier](https://github.com/mojang/brigad
 
 This port is not supported by Mojang or Microsoft. For any issues, please report to [AtomicBlom/Brigadier.NET](https://www.github.com/AtomicBlom/Brigadier.NET/issues)
 
+You can use Brigadier.NET with any runtime that supports .NET Standard 1.1 or higher
+
 # Installation
 <!--Brigadier.NET is available from NuGet, install it via the [BrigadierNET](https://nuget.org/) NuGet package-->
-A NuGet Package will be provided shortly
+https://www.nuget.org/packages/Brigadier.NET/
+
+You can install the package from [NuGet](https://www.nuget.org/packages/Brigadier.NET)
+
+PackageManager:
+```powershell
+PM> Install-Package Brigadier.NET
+```
+
+dotnet:
+```cmd
+dotnet add package Brigadier.NET
+```
 
 # Contributing
 Contributions are welcome ! :D
