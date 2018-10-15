@@ -44,9 +44,9 @@ namespace Brigadier.NET.Tests.tree
 		}
 
 		[Fact]
-		public async Task TestSuggestions(){
+		public void TestSuggestions(){
 			var context = Substitute.For<CommandContext<object>>(null, null, null, null, null, null, null, null, null, false);
-			var result = await _node.ListSuggestions(context, new SuggestionsBuilder("", 0));
+			var result = _node.ListSuggestions(context, new SuggestionsBuilder("", 0));
 			result.IsEmpty().Should().Be(true);
 		}
 

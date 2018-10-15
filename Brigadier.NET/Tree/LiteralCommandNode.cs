@@ -57,11 +57,11 @@ namespace Brigadier.NET.Tree
 			return -1;
 		}
 
-		public override Task<Suggestions> ListSuggestions(CommandContext<TSource> context, SuggestionsBuilder builder)
+		public override Suggestions ListSuggestions(CommandContext<TSource> context, SuggestionsBuilder builder)
 		{
 			if (Literal.ToLower().StartsWith(builder.Remaining.ToLower()))
 			{
-				return builder.Suggest(Literal).BuildFuture();
+				return builder.Suggest(Literal).Build();
 			}
 			else
 			{

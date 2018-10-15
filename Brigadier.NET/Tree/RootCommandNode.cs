@@ -23,7 +23,7 @@ namespace Brigadier.NET.Tree
 		{
 		}
 
-		public override Task<Suggestions> ListSuggestions(CommandContext<TSource> context, SuggestionsBuilder builder)
+		public override Suggestions ListSuggestions(CommandContext<TSource> context, SuggestionsBuilder builder)
 		{
 			return Suggestions.Empty();
 		}

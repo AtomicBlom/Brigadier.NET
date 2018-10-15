@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Brigadier.NET.Context;
 
@@ -26,6 +27,7 @@ namespace Brigadier.NET.Suggestion
 			return Suggestions.Create(Input, _result.ToArray());
 		}
 
+		[Obsolete("Accidentally ported Java concept, prefer Build")]
 		public Task<Suggestions> BuildFuture()
 		{
 			return Task.FromResult(Build());

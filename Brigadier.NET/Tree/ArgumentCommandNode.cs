@@ -51,7 +51,7 @@ namespace Brigadier.NET.Tree
 			contextBuilder.WithNode(this, parsed.Range);
 		}
 
-		public override Task<Suggestions> ListSuggestions(CommandContext<TSource> context, SuggestionsBuilder builder)
+		public override Suggestions ListSuggestions(CommandContext<TSource> context, SuggestionsBuilder builder)
 		{
 			if (CustomSuggestions == null)
 			{

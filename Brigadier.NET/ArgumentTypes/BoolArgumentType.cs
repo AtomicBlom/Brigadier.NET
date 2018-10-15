@@ -18,7 +18,7 @@ namespace Brigadier.NET.ArgumentTypes
 			return reader.ReadBoolean();
 		}
 
-		public override Task<Suggestions> ListSuggestions<TSource>(CommandContext<TSource> context, SuggestionsBuilder builder)
+		public override Suggestions ListSuggestions<TSource>(CommandContext<TSource> context, SuggestionsBuilder builder)
 		{
 			if ("true".StartsWith(builder.Remaining.ToLower()))
 			{
@@ -28,7 +28,7 @@ namespace Brigadier.NET.ArgumentTypes
 			{
 				builder.Suggest("false");
 			}
-			return builder.BuildFuture();
+			return builder.Build();
 		}
 
 		public override IEnumerable<string> Examples => BoolExamples;

@@ -148,7 +148,7 @@ namespace Brigadier.NET.Tree
 		public abstract void Parse(StringReader reader, CommandContextBuilder<TSource> contextBuilder);
 
 		/// <exception cref="CommandSyntaxException"></exception>
-		public abstract Task<Suggestions> ListSuggestions(CommandContext<TSource> context, SuggestionsBuilder builder);
+		public abstract Suggestions ListSuggestions(CommandContext<TSource> context, SuggestionsBuilder builder);
 
 		public abstract IArgumentBuilder<TSource, CommandNode<TSource>> CreateBuilder();
 

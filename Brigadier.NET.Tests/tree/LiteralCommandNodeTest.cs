@@ -67,17 +67,17 @@ namespace Brigadier.NET.Tests.tree
 		}
 
 		[Fact]
-		public async Task TestSuggestions(){
-			var empty = await _node.ListSuggestions(_contextBuilder.Build(""), new SuggestionsBuilder("", 0));
+		public void TestSuggestions(){
+			var empty = _node.ListSuggestions(_contextBuilder.Build(""), new SuggestionsBuilder("", 0));
 			empty.List.Should().BeEquivalentTo(new List<Suggestion.Suggestion> { new Suggestion.Suggestion(StringRange.At(0), "foo") });
 
-			var foo = await _node.ListSuggestions(_contextBuilder.Build("foo"), new SuggestionsBuilder("foo", 0));
+			var foo = _node.ListSuggestions(_contextBuilder.Build("foo"), new SuggestionsBuilder("foo", 0));
 			foo.IsEmpty().Should().Be(true);
 
-			var food = await _node.ListSuggestions(_contextBuilder.Build("food"), new SuggestionsBuilder("food", 0));
+			var food = _node.ListSuggestions(_contextBuilder.Build("food"), new SuggestionsBuilder("food", 0));
 			food.IsEmpty().Should().Be(true);
 
-			var b = await _node.ListSuggestions(_contextBuilder.Build("b"), new SuggestionsBuilder("b", 0));
+			var b = _node.ListSuggestions(_contextBuilder.Build("b"), new SuggestionsBuilder("b", 0));
 			b.IsEmpty().Should().Be(true);
 		}
 

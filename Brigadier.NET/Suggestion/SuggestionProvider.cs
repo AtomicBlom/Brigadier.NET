@@ -3,5 +3,5 @@ using Brigadier.NET.Context;
 
 namespace Brigadier.NET.Suggestion
 {
-	public delegate Task<Suggestions> SuggestionProvider<TSource>(CommandContext<TSource> context, SuggestionsBuilder builder);
+	public delegate Suggestions SuggestionProvider<TSource>(CommandContext<TSource> context, SuggestionsBuilder builder);
 }

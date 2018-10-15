@@ -54,9 +54,9 @@ namespace Brigadier.NET.Suggestion
 			return $"Suggestions{{range={Range}, suggestions={List}}}";
 		}
 
-		public static Task<Suggestions> Empty()
+		public static Suggestions Empty()
 		{
-			return Task.FromResult(NoSuggestions);
+			return NoSuggestions;
 		}
 
 		public static Suggestions Merge(string command, ICollection<Suggestions> input)
