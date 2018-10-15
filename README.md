@@ -178,4 +178,4 @@ dispatcher.Register(
 
 ```
 
-[![GitHub forks](https://img.shields.io/github/forks/AtomicBlom/Brigadier.NET.svg?style=social&label=Fork)](https://github.com/AtomicBlom/Brigadier.NET/fork) ![GitHub stars](https://img.shields.io/github/stars/AtomicBlom/Brigadier.NET.svg?style=social&label=Stars)
+[![GitHub forks](https://img.shields.io/github/forks/AtomicBlom/Brigadier.NET.svg?style=social&label=Fork)](https://github.com/AtomicBlom/Brigadier.NET/fork) [![GitHub stars](https://img.shields.io/github/stars/AtomicBlom/Brigadier.NET.svg?style=social&label=Stars)](https://github.com/AtomicBlom/Brigadier.NET/stargazers)
