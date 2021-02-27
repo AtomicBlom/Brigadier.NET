@@ -116,16 +116,17 @@ The current version of Brigadier.NET is based on the source code of brigadier at
 Changes have been made to bring the project to a more .NET feel, or to improve the simplicity of using the project in a .NET ecosystem
 
 ### Registering commands
-.NET's Generics are limited in where it can infer type parameters from. We can make it easier to infer the type of TSource by providing a context in the form of a lambda.
-```
+.NET's Generics are limited in where it can infer type parameters from. We can make it easier to infer the type of `TSource` by providing a context in the form of a lambda.
+
+```csharp
 var dispatcher = new CommandDispatcher<CommandSourceStack>();
 
 dispatcher.Register(l => l.Literal("foo"));
 ```
 
-The lambda can also be used to get the TSource for many argument builders.
+The lambda can also be used to get the `TSource` for many argument builders.
 
-```
+```csharp
 dispatcher.Register(l => 
     l.Literal("foo")
         .Then(
@@ -135,7 +136,8 @@ dispatcher.Register(l =>
 ```
 
 Without the lambda, you will be forced to specify the generic type parameters manually.
-```
+
+```csharp
 dispatcher.Register(
     LiteralArgumentBuilder<CommandSourceStack>.LiteralArgument("foo")
         .Then(
