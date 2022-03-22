@@ -6,7 +6,7 @@ parameters:
 jobs:
   - job: Build
     pool:
-      vmImage: 'Ubuntu 16.04'
+      vmImage: 'ubuntu-latest'
 
     variables:
       revision: $[counter('release-number', 0)]
