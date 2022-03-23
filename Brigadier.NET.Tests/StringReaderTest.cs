@@ -166,6 +166,33 @@ namespace Brigadier.NET.Tests
 			reader.Remaining.Should().BeEquivalentTo("");
 		}
 
+        [Fact]
+        public void ReadSingleQuotedString()
+        {
+            var reader = new StringReader("'hello world'");
+            reader.ReadQuotedString().Should().BeEquivalentTo("hello world");
+            reader.Read.Should().BeEquivalentTo("'hello world'");
+            reader.Remaining.Should().BeEquivalentTo("");
+        }
+
+        [Fact]
+        public void ReadMixedQuotedString_DoubleInsideSingle()
+        {
+            var reader = new StringReader(@"'hello ""world""'");
+            reader.ReadQuotedString().Should().BeEquivalentTo(@"hello ""world""");
+            reader.Read.Should().BeEquivalentTo(@"'hello ""world""'");
+            reader.Remaining.Should().BeEquivalentTo("");
+        }
+
+        [Fact]
+        public void ReadMixedQuotedString_SingleInsideDouble()
+        {
+            var reader = new StringReader(@"""hello 'world'""");
+            reader.ReadQuotedString().Should().BeEquivalentTo("hello 'world'");
+            reader.Read.Should().BeEquivalentTo(@"""hello 'world'""");
+            reader.Remaining.Should().BeEquivalentTo("");
+        }
+
 		[Fact]
 		public void readQuotedString_empty()
 		{
@@ -261,6 +288,44 @@ namespace Brigadier.NET.Tests
 				.Where(ex => ex.Type == CommandSyntaxException.BuiltInExceptions.ReaderInvalidEscape())
 				.Where(ex => ex.Cursor == 7);
 		}
+
+        [Fact]
+        public void ReadQuotedString_InvalidQuoteEscape()
+        {
+            var reader = new StringReader("'hello\\\"\'world");
+
+            reader.Invoking(r => reader.ReadQuotedString())
+                .Should().Throw<CommandSyntaxException>()
+                .Where(ex => ex.Type == CommandSyntaxException.BuiltInExceptions.ReaderInvalidEscape())
+                .Where(ex => ex.Cursor == 7);
+		}
+
+        [Fact]
+        public void ReadQuotedString_NoQuotes()
+        {
+            var reader = new StringReader("hello world");
+            reader.ReadString().Should().Be("hello");
+            reader.Read.Should().BeEquivalentTo("hello");
+            reader.Remaining.Should().BeEquivalentTo(" world");
+		}
+
+        [Fact]
+        public void ReadQuotedString_SingleQuotes()
+        {
+            var reader = new StringReader("'hello world'");
+            reader.ReadString().Should().Be("hello world");
+            reader.Read.Should().BeEquivalentTo("'hello world'");
+            reader.Remaining.Should().BeEquivalentTo("");
+        }
+
+        [Fact]
+        public void ReadQuotedString_DoubleQuotes()
+        {
+            var reader = new StringReader(@"""hello world""");
+            reader.ReadString().Should().Be("hello world");
+            reader.Read.Should().BeEquivalentTo(@"""hello world""");
+            reader.Remaining.Should().BeEquivalentTo("");
+        }
 
 		[Fact]
 		public void ReadInt()

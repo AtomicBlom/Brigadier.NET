@@ -20,11 +20,11 @@ namespace Brigadier.NET.ArgumentTypes
 
 		public override Task<Suggestions> ListSuggestions<TSource>(CommandContext<TSource> context, SuggestionsBuilder builder)
 		{
-			if ("true".StartsWith(builder.Remaining.ToLower()))
+			if ("true".StartsWith(builder.RemainingLowerCase))
 			{
 				builder.Suggest("true");
 			}
-			if ("false".StartsWith(builder.Remaining.ToLower()))
+			if ("false".StartsWith(builder.RemainingLowerCase))
 			{
 				builder.Suggest("false");
 			}

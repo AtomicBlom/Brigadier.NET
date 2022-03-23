@@ -99,11 +99,7 @@ namespace Brigadier.NET.Tree
 					_arguments.Add(node.Name, argumentCommandNode);
 				}
 			}
-
-			//FIXME: What is the equivalent of this? It looks like this is sorting by entry?
-			//       It's probably a performance optimization
-			//children = children.entrySet().stream().sorted(Map.Entry.comparingByValue()).collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue, (e1, e2) -> e1, LinkedHashMap::new));
-		}
+        }
 
 		public void FindAmbiguities(AmbiguityConsumer<TSource> consumer)
 		{
