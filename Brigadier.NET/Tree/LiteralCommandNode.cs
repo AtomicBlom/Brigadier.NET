@@ -15,9 +15,12 @@ namespace Brigadier.NET.Tree
 			: base(command, requirement, redirect, modifier, forks)
 		{
 			Literal = literal;
-		}
+            LiteralLowerCase = literal.ToLowerInvariant();
+        }
 
-		public string Literal { get; }
+        public string Literal { get; }
+
+        public string LiteralLowerCase { get; }
 
 		public override string Name => Literal;
 
@@ -59,7 +62,7 @@ namespace Brigadier.NET.Tree
 
 		public override Task<Suggestions> ListSuggestions(CommandContext<TSource> context, SuggestionsBuilder builder)
 		{
-			if (Literal.ToLower().StartsWith(builder.Remaining.ToLower()))
+			if (Literal.ToLower().StartsWith(builder.RemainingLowerCase))
 			{
 				return builder.Suggest(Literal).BuildFuture();
 			}

@@ -8,8 +8,9 @@ namespace Brigadier.NET
 	public class StringReader : IStringReader
 	{
 		private static readonly char SyntaxEscape = '\\';
-		private static readonly char SyntaxQuote = '"';
-
+		private static readonly char SyntaxDoubleQuote = '"';
+        private static readonly char SyntaxSingleQuote = '\'';
+		
 		public StringReader(StringReader other)
 		{
 			String = other.String;
@@ -69,6 +70,11 @@ namespace Brigadier.NET
 		{
 			return c >= '0' && c <= '9' || c == '.' || c == '-';
 		}
+
+        private static bool IsQuotedStringStart(char c)
+        {
+            return c == SyntaxDoubleQuote || c == SyntaxSingleQuote;
+        }
 
 		public void SkipWhitespace()
 		{
@@ -202,27 +208,32 @@ namespace Brigadier.NET
 			return String.Substring(start, Cursor - start);
 		}
 
-		/// <exception cref="CommandSyntaxException" />
-		public string ReadQuotedString()
-		{
-			if (!CanRead())
-			{
-				return "";
-			}
-			else if (Peek() != SyntaxQuote)
-			{
-				throw CommandSyntaxException.BuiltInExceptions.ReaderExpectedStartOfQuote().CreateWithContext(this);
-			}
+        /// <exception cref="CommandSyntaxException" />
+        public string ReadQuotedString()
+        {
+            if (!CanRead())
+            {
+                return "";
+            }
+            var next = Peek();
+            if (!IsQuotedStringStart(next))
+            {
+                throw CommandSyntaxException.BuiltInExceptions.ReaderExpectedStartOfQuote().CreateWithContext(this);
+            }
 
-			Skip();
-			var result = new StringBuilder();
+            Skip();
+            return ReadStringUntil(next);
+        }
+
+		private string ReadStringUntil(char terminator) {
+            var result = new StringBuilder();
 			var escaped = false;
 			while (CanRead())
 			{
 				var c = Next();
 				if (escaped)
 				{
-					if (c == SyntaxQuote || c == SyntaxEscape)
+					if (c == terminator || c == SyntaxEscape)
 					{
 						result.Append(c);
 						escaped = false;
@@ -237,7 +248,7 @@ namespace Brigadier.NET
 				{
 					escaped = true;
 				}
-				else if (c == SyntaxQuote)
+				else if (c == terminator)
 				{
 					return result.ToString();
 				}
@@ -253,15 +264,18 @@ namespace Brigadier.NET
 		/// <exception cref="CommandSyntaxException" />
 		public string ReadString()
 		{
-			if (CanRead() && Peek() == SyntaxQuote)
-			{
-				return ReadQuotedString();
-			}
-			else
-			{
-				return ReadUnquotedString();
-			}
-		}
+            if (!CanRead())
+            {
+                return "";
+            }
+            var next = Peek();
+            if (IsQuotedStringStart(next))
+            {
+				Skip();
+                return ReadStringUntil(next);
+            }
+            return ReadUnquotedString();
+        }
 
 		/// <exception cref="CommandSyntaxException" />
 		public bool ReadBoolean()

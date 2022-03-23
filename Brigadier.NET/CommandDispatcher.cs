@@ -692,6 +692,7 @@ namespace Brigadier.NET
 
 			var fullInput = parse.Reader.String;
 			var truncatedInput = fullInput.Substring(0, cursor);
+            var truncatedInputLowerCase = truncatedInput.ToLowerInvariant();
 			var futures = new Task<Suggestions>[parent.Children.Count()];
 			var i = 0;
 			foreach (var node in parent.Children)
@@ -699,7 +700,7 @@ namespace Brigadier.NET
 				var future = Suggestions.Empty();
 				try
 				{
-					future = node.ListSuggestions(context.Build(truncatedInput), new SuggestionsBuilder(truncatedInput, start));
+					future = node.ListSuggestions(context.Build(truncatedInput), new SuggestionsBuilder(truncatedInput, truncatedInputLowerCase, start));
 				}
 				catch (CommandSyntaxException)
 				{

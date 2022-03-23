@@ -8,18 +8,26 @@ namespace Brigadier.NET.Suggestion
 	{
 		private readonly List<Suggestion> _result = new List<Suggestion>();
 
-		public SuggestionsBuilder(string input, int start)
+		public SuggestionsBuilder(string input, string inputLowerCase, int start)
 		{
 			Input = input;
-			Start = start;
+            InputLowerCase = inputLowerCase;
+            Start = start;
 			Remaining = input.Substring(start);
-		}
+            RemainingLowerCase = inputLowerCase.Substring(start);
+        }
+
+        public SuggestionsBuilder(string input, int start) : this(input, input.ToLowerInvariant(), start) {}
 
 		public string Input { get; }
 
-		public int Start { get; }
+        public string InputLowerCase { get; }
+
+        public int Start { get; }
 
 		public string Remaining { get; }
+
+        public string RemainingLowerCase { get; set; }
 
 		public Suggestions Build()
 		{
@@ -71,12 +79,12 @@ namespace Brigadier.NET.Suggestion
 
 		public SuggestionsBuilder CreateOffset(int start)
 		{
-			return new SuggestionsBuilder(Input, start);
+			return new SuggestionsBuilder(Input, InputLowerCase, start);
 		}
 
 		public SuggestionsBuilder Restart()
 		{
-			return new SuggestionsBuilder(Input, Start);
+			return CreateOffset(Start);
 		}
 	}
 }
