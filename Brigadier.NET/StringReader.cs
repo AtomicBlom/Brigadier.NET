@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 using Brigadier.NET.Exceptions;
@@ -163,7 +164,7 @@ namespace Brigadier.NET
 		}
 
 		/// <exception cref="CommandSyntaxException" />
-		public float ReadFloat()
+		public float ReadFloat() 
 		{
 			var start = Cursor;
 			while (CanRead() && IsAllowedNumber(Peek()))
@@ -179,7 +180,7 @@ namespace Brigadier.NET
 
 			try
 			{
-				return float.Parse(number);
+				return float.Parse(number, CultureInfo.InvariantCulture);
 			}
 			catch (FormatException)
 			{
