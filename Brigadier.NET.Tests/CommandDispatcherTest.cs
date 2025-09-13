@@ -255,6 +255,51 @@ namespace Brigadier.NET.Tests
 			_command.Received().Invoke(Arg.Any<CommandContext<object>>());
 		}
 
+		/*
+
+    @Test
+    public void testCorrectExecuteContextAfterRedirect() throws Exception {
+        final CommandDispatcher<Integer> subject = new CommandDispatcher<>();
+
+        final RootCommandNode<Integer> root = subject.getRoot();
+        final LiteralArgumentBuilder<Integer> add = literal("add");
+        final LiteralArgumentBuilder<Integer> blank = literal("blank");
+        final RequiredArgumentBuilder<Integer, Integer> addArg = argument("value", integer());
+        final LiteralArgumentBuilder<Integer> run = literal("run");
+
+        subject.register(add.then(addArg.redirect(root, c -> c.getSource() + getInteger(c, "value"))));
+        subject.register(blank.redirect(root));
+        subject.register(run.executes(CommandContext::getSource));
+
+        assertThat(subject.execute("run", 0), is(0));
+        assertThat(subject.execute("run", 1), is(1));
+
+        assertThat(subject.execute("add 5 run", 1), is(1 + 5));
+        assertThat(subject.execute("add 5 add 6 run", 2), is(2 + 5 + 6));
+        assertThat(subject.execute("add 5 blank run", 1), is(1 + 5));
+        assertThat(subject.execute("blank add 5 run", 1), is(1 + 5));
+        assertThat(subject.execute("add 5 blank add 6 run", 2), is(2 + 5 + 6));
+        assertThat(subject.execute("add 5 blank blank add 6 run", 2), is(2 + 5 + 6));
+    }
+
+    @Test
+    public void testSharedRedirectAndExecuteNodes() throws CommandSyntaxException {
+        final CommandDispatcher<Integer> subject = new CommandDispatcher<>();
+
+        final RootCommandNode<Integer> root = subject.getRoot();
+        final LiteralArgumentBuilder<Integer> add = literal("add");
+        final RequiredArgumentBuilder<Integer, Integer> addArg = argument("value", integer());
+
+        subject.register(add.then(
+            addArg
+                .redirect(root, c -> c.getSource() + getInteger(c, "value"))
+                .executes(CommandContext::getSource)
+        ));
+
+        assertThat(subject.execute("add 5", 1), is(1));
+        assertThat(subject.execute("add 5 add 6", 1), is(1 + 5));
+    }
+		 */
 
 		[Fact]
 		public void TestExecuteRedirected()
@@ -290,6 +335,34 @@ namespace Brigadier.NET.Tests
 			_command.Received(1).Invoke(Arg.Is<CommandContext<object>>(c => c.Source == source2));
 		}
 
+		/*
+    @Test
+    public void testIncompleteRedirectShouldThrow() {
+        final LiteralCommandNode<Object> foo = subject.register(literal("foo")
+            .then(literal("bar")
+                .then(argument("value", integer()).executes(context -> IntegerArgumentType.getInteger(context, "value"))))
+            .then(literal("awa").executes(context -> 2)));
+        subject.register(literal("baz").redirect(foo));
+        try {
+            subject.execute("baz bar", source);
+            fail("Should have thrown an exception");
+        } catch (CommandSyntaxException e) {
+            assertThat(e.getType(), is(CommandSyntaxException.BUILT_IN_EXCEPTIONS.dispatcherUnknownCommand()));
+        }
+    }
+
+    @Test
+    public void testRedirectModifierEmptyResult() throws CommandSyntaxException {
+        final LiteralCommandNode<Object> foo = subject.register(literal("foo")
+            .then(literal("bar")
+                .then(argument("value", integer()).executes(context -> IntegerArgumentType.getInteger(context, "value"))))
+            .then(literal("awa").executes(context -> 2)));
+        final RedirectModifier<Object> emptyModifier = context -> Collections.emptyList();
+        subject.register(literal("baz").fork(foo, emptyModifier));
+        int result = subject.execute("baz bar 100", source);
+        assertThat(result, is(0)); // No commands executed, so result is 0
+    }
+		 */
 		[Fact]
 		public void TestExecuteOrphanedSubCommand()
 		{
@@ -357,5 +430,172 @@ namespace Brigadier.NET.Tests
 		{
 			_subject.FindNode(new List<string> { "foo", "bar" }).Should().BeNull();
 		}
+
+		/*
+
+    @Test
+    public void testResultConsumerInNonErrorRun() throws CommandSyntaxException {
+        subject.setConsumer(consumer);
+
+        subject.register(literal("foo").executes(command));
+        when(command.run(any())).thenReturn(5);
+
+        assertThat(subject.execute("foo", source), is(5));
+        verify(consumer).onCommandComplete(any(), eq(true), eq(5));
+        verifyNoMoreInteractions(consumer);
+    }
+
+    @Test
+    public void testResultConsumerInForkedNonErrorRun() throws CommandSyntaxException {
+        subject.setConsumer(consumer);
+
+        subject.register(literal("foo").executes(c -> (Integer)(c.getSource())));
+        final Object[] contexts = new Object[] {9, 10, 11};
+
+        subject.register(literal("repeat").fork(subject.getRoot(), context -> Arrays.asList(contexts)));
+
+        assertThat(subject.execute("repeat foo", source), is(contexts.length));
+        verify(consumer).onCommandComplete(argThat(contextSourceMatches(contexts[0])), eq(true), eq(9));
+        verify(consumer).onCommandComplete(argThat(contextSourceMatches(contexts[1])), eq(true), eq(10));
+        verify(consumer).onCommandComplete(argThat(contextSourceMatches(contexts[2])), eq(true), eq(11));
+        verifyNoMoreInteractions(consumer);
+    }
+
+    @Test
+    public void testExceptionInNonForkedCommand() throws CommandSyntaxException {
+        subject.setConsumer(consumer);
+        subject.register(literal("crash").executes(command));
+        final CommandSyntaxException exception = CommandSyntaxException.BUILT_IN_EXCEPTIONS.readerExpectedBool().create();
+        when(command.run(any())).thenThrow(exception);
+
+        try {
+            subject.execute("crash", source);
+            fail();
+        } catch (final CommandSyntaxException ex) {
+            assertThat(ex, is(exception));
+        }
+
+        verify(consumer).onCommandComplete(any(), eq(false), eq(0));
+        verifyNoMoreInteractions(consumer);
+    }
+
+    @Test
+    public void testExceptionInNonForkedRedirectedCommand() throws CommandSyntaxException {
+        subject.setConsumer(consumer);
+        subject.register(literal("crash").executes(command));
+        subject.register(literal("redirect").redirect(subject.getRoot()));
+
+        final CommandSyntaxException exception = CommandSyntaxException.BUILT_IN_EXCEPTIONS.readerExpectedBool().create();
+        when(command.run(any())).thenThrow(exception);
+
+        try {
+            subject.execute("redirect crash", source);
+            fail();
+        } catch (final CommandSyntaxException ex) {
+            assertThat(ex, is(exception));
+        }
+
+        verify(consumer).onCommandComplete(any(), eq(false), eq(0));
+        verifyNoMoreInteractions(consumer);
+    }
+
+    @Test
+    public void testExceptionInForkedRedirectedCommand() throws CommandSyntaxException {
+        subject.setConsumer(consumer);
+        subject.register(literal("crash").executes(command));
+        subject.register(literal("redirect").fork(subject.getRoot(), Collections::singleton));
+
+        final CommandSyntaxException exception = CommandSyntaxException.BUILT_IN_EXCEPTIONS.readerExpectedBool().create();
+        when(command.run(any())).thenThrow(exception);
+
+        assertThat(subject.execute("redirect crash", source), is(0));
+        verify(consumer).onCommandComplete(any(), eq(false), eq(0));
+        verifyNoMoreInteractions(consumer);
+    }
+
+    @Test
+    public void testExceptionInNonForkedRedirect() throws CommandSyntaxException {
+        final CommandSyntaxException exception = CommandSyntaxException.BUILT_IN_EXCEPTIONS.readerExpectedBool().create();
+
+        subject.setConsumer(consumer);
+        subject.register(literal("noop").executes(command));
+        subject.register(literal("redirect").redirect(subject.getRoot(), context -> {
+            throw exception;
+        }));
+
+        when(command.run(any())).thenReturn(3);
+
+        try {
+            subject.execute("redirect noop", source);
+            fail();
+        } catch (final CommandSyntaxException ex) {
+            assertThat(ex, is(exception));
+        }
+
+        verifyZeroInteractions(command);
+        verify(consumer).onCommandComplete(any(), eq(false), eq(0));
+        verifyNoMoreInteractions(consumer);
+    }
+
+    @Test
+    public void testExceptionInForkedRedirect() throws CommandSyntaxException {
+        final CommandSyntaxException exception = CommandSyntaxException.BUILT_IN_EXCEPTIONS.readerExpectedBool().create();
+
+        subject.setConsumer(consumer);
+        subject.register(literal("noop").executes(command));
+        subject.register(literal("redirect").fork(subject.getRoot(), context -> {
+            throw exception;
+        }));
+
+        when(command.run(any())).thenReturn(3);
+
+
+        assertThat(subject.execute("redirect noop", source), is(0));
+
+        verifyZeroInteractions(command);
+        verify(consumer).onCommandComplete(any(), eq(false), eq(0));
+        verifyNoMoreInteractions(consumer);
+    }
+
+    @Test
+    public void testPartialExceptionInForkedRedirect() throws CommandSyntaxException {
+        final CommandSyntaxException exception = CommandSyntaxException.BUILT_IN_EXCEPTIONS.readerExpectedBool().create();
+        final Object otherSource = new Object();
+        final Object rejectedSource = new Object();
+
+        subject.setConsumer(consumer);
+        subject.register(literal("run").executes(command));
+        subject.register(literal("split").fork(subject.getRoot(), context -> Arrays.asList(source, rejectedSource, otherSource)));
+        subject.register(literal("filter").fork(subject.getRoot(), context -> {
+            final Object currentSource = context.getSource();
+            if (currentSource == rejectedSource) {
+                throw exception;
+            }
+            return Collections.singleton(currentSource);
+        }));
+
+        when(command.run(any())).thenReturn(3);
+
+        assertThat(subject.execute("split filter run", source), is(2));
+
+        verify(command).run(argThat(contextSourceMatches(source)));
+        verify(command).run(argThat(contextSourceMatches(otherSource)));
+        verifyNoMoreInteractions(command);
+
+        verify(consumer).onCommandComplete(argThat(contextSourceMatches(rejectedSource)), eq(false), eq(0));
+        verify(consumer).onCommandComplete(argThat(contextSourceMatches(source)), eq(true), eq(3));
+        verify(consumer).onCommandComplete(argThat(contextSourceMatches(otherSource)), eq(true), eq(3));
+        verifyNoMoreInteractions(consumer);
+    }
+
+    public static Matcher<CommandContext<Object>> contextSourceMatches(final Object source) {
+        return new CustomMatcher<CommandContext<Object>>("source " + source) {
+            @Override
+            public boolean matches(Object object) {
+                return (object instanceof CommandContext) && ((CommandContext<?>) object).getSource() == source;
+            }
+        };
+    }
+		 */
 	}
 }
