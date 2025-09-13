@@ -224,14 +224,14 @@ namespace Brigadier.NET.Tests
 		public void TestExecuteRedirectedMultipleTimes()
 		{
 			var concreteNode = _subject.Register(r => r.Literal("actual").Executes(_command));
-			var redirectNode = _subject.Register(r => r.Literal("redirected").Redirect(_subject.GetRoot()));
+			var redirectNode = _subject.Register(r => r.Literal("redirected").Redirect(_subject.Root));
 
 			var input = "redirected redirected actual";
 
 			var parse = _subject.Parse(input, _source);
 			parse.Context.Range.Get(input).Should().BeEquivalentTo("redirected");
 			parse.Context.Nodes.Count.Should().Be(1);
-			parse.Context.RootNode.Should().Be(_subject.GetRoot());
+			parse.Context.RootNode.Should().Be(_subject.Root);
 			parse.Context.Nodes[0].Range.Should().BeEquivalentTo(parse.Context.Range);
 			parse.Context.Nodes[0].Node.Should().Be(redirectNode);
 
@@ -239,7 +239,7 @@ namespace Brigadier.NET.Tests
 			child1.Should().NotBeNull();
 			child1.Range.Get(input).Should().BeEquivalentTo("redirected");
 			child1.Nodes.Count.Should().Be(1);
-			child1.RootNode.Should().Be(_subject.GetRoot());
+			child1.RootNode.Should().Be(_subject.Root);
 			child1.Nodes[0].Range.Should().BeEquivalentTo(child1.Range);
 			child1.Nodes[0].Node.Should().Be(redirectNode);
 
@@ -247,7 +247,7 @@ namespace Brigadier.NET.Tests
 			child2.Should().NotBeNull();
 			child2.Range.Get(input).Should().BeEquivalentTo("actual");
 			child2.Nodes.Count.Should().Be(1);
-			child2.RootNode.Should().Be(_subject.GetRoot());
+			child2.RootNode.Should().Be(_subject.Root);
 			child2.Nodes[0].Range.Should().BeEquivalentTo(child2.Range);
 			child2.Nodes[0].Node.Should().Be(concreteNode);
 
@@ -310,13 +310,13 @@ namespace Brigadier.NET.Tests
 			modifier.Invoke(Arg.Is<CommandContext<object>>(s => s.Source == _source)).Returns([source1, source2]);
 
 			var concreteNode = _subject.Register(r => r.Literal("actual").Executes(_command));
-			var redirectNode = _subject.Register(r => r.Literal("redirected").Fork(_subject.GetRoot(), modifier));
+			var redirectNode = _subject.Register(r => r.Literal("redirected").Fork(_subject.Root, modifier));
 
 			var input = "redirected actual";
 			var parse = _subject.Parse(input, _source);
 			parse.Context.Range.Get(input).Should().BeEquivalentTo("redirected");
 			parse.Context.Nodes.Count.Should().Be(1);
-			parse.Context.RootNode.Should().BeEquivalentTo(_subject.GetRoot());
+			parse.Context.RootNode.Should().BeEquivalentTo(_subject.Root);
 			parse.Context.Nodes[0].Range.Should().BeEquivalentTo(parse.Context.Range);
 			parse.Context.Nodes[0].Node.Should().Be(redirectNode);
 			parse.Context.Source.Should().Be(_source);
@@ -325,7 +325,7 @@ namespace Brigadier.NET.Tests
 			parent.Should().NotBeNull();
 			parent.Range.Get(input).Should().BeEquivalentTo("actual");
 			parent.Nodes.Count.Should().Be(1);
-			parse.Context.RootNode.Should().BeEquivalentTo(_subject.GetRoot());
+			parse.Context.RootNode.Should().BeEquivalentTo(_subject.Root);
 			parent.Nodes[0].Range.Should().BeEquivalentTo(parent.Range);
 			parent.Nodes[0].Node.Should().Be(concreteNode);
 			parent.Source.Should().Be(_source);

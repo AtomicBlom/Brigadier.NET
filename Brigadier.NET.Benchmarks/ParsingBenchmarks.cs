@@ -73,7 +73,7 @@ public class ParsingBenchmarks {
         );
         subject.Register(r => 
             r.Literal("j")
-                .Redirect(subject.GetRoot())
+                .Redirect(subject.Root)
         );
         subject.Register(r => 
             r.Literal("k")

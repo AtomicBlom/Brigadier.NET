@@ -641,25 +641,22 @@ namespace Brigadier.NET
 		 *
 		 * @return root of the command tree
 		 */
-		public RootCommandNode<TSource> GetRoot()
-		{
-			return _root;
-		}
+		public RootCommandNode<TSource> Root => _root;
 
-/**
- * Finds a valid path to a given node on the command tree.
- *
- * <p>There may theoretically be multiple paths to a node on the tree, especially with the use of forking or redirecting.
- * As such, this method makes no guarantees about which path it finds. It will not look at forks or redirects,
- * and find the first instance of the target node on the tree.</p>
- *
- * <p>The only guarantee made is that for the same command tree and the same version of this library, the result of
- * this method will <b>always</b> be a valid input for {@link #findNode(Collection)}, which should return the same node
- * as provided to this method.</p>
- *
- * @param target the target node you are finding a path for
- * @return a path to the resulting node, or an empty list if it was not found
- */
+		/**
+		 * Finds a valid path to a given node on the command tree.
+		 *
+		 * <p>There may theoretically be multiple paths to a node on the tree, especially with the use of forking or redirecting.
+		 * As such, this method makes no guarantees about which path it finds. It will not look at forks or redirects,
+		 * and find the first instance of the target node on the tree.</p>
+		 *
+		 * <p>The only guarantee made is that for the same command tree and the same version of this library, the result of
+		 * this method will <b>always</b> be a valid input for {@link #findNode(Collection)}, which should return the same node
+		 * as provided to this method.</p>
+		 *
+		 * @param target the target node you are finding a path for
+		 * @return a path to the resulting node, or an empty list if it was not found
+		 */
 		public List<string> GetPath(CommandNode<TSource> target)
 		{
 			var nodes = new List<List<CommandNode<TSource>>>();

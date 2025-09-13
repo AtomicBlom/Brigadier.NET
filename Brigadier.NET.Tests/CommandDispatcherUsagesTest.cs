@@ -80,7 +80,7 @@ namespace Brigadier.NET.Tests
 			);
 			_subject.Register(r =>
 				r.Literal("j")
-					.Redirect(_subject.GetRoot())
+					.Redirect(_subject.Root)
 			);
 			_subject.Register(r =>
 				r.Literal("k")
@@ -102,7 +102,7 @@ namespace Brigadier.NET.Tests
 		public void testAllUsage_noCommands()
 		{
 			_subject = new CommandDispatcher<object>();
-			var results = _subject.GetAllUsage(_subject.GetRoot(), _source, true);
+			var results = _subject.GetAllUsage(_subject.Root, _source, true);
 			results.Should().BeEmpty();
 		}
 
@@ -110,14 +110,14 @@ namespace Brigadier.NET.Tests
 		public void testSmartUsage_noCommands()
 		{
 			_subject = new CommandDispatcher<object>();
-			var results = _subject.GetSmartUsage(_subject.GetRoot(), _source);
+			var results = _subject.GetSmartUsage(_subject.Root, _source);
 			results.Should().BeEmpty();
 		}
 
 		[Fact]
 		public void testAllUsage_root()
 		{
-			var results = _subject.GetAllUsage(_subject.GetRoot(), _source, true);
+			var results = _subject.GetAllUsage(_subject.Root, _source, true);
 			results.Should().ContainInOrder(
 				"a 1 i", 
 				"a 1 ii", 
@@ -148,7 +148,7 @@ namespace Brigadier.NET.Tests
 		[Fact]
 		public void testSmartUsage_root()
 		{
-			var results = _subject.GetSmartUsage(_subject.GetRoot(), _source);
+			var results = _subject.GetSmartUsage(_subject.Root, _source);
 			results.Should().Contain(new Dictionary<CommandNode<object>, string>
 			{
 				{Get("a"), "a (1|2)"},

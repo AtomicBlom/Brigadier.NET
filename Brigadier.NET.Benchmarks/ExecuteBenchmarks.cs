@@ -17,8 +17,8 @@ public class ExecuteBenchmarks {
     public void setup() {
         dispatcher = new CommandDispatcher<object>();
         dispatcher.Register(r => r.Literal("command").Executes(c => 0));
-        dispatcher.Register(r => r.Literal("redirect").Redirect(dispatcher.GetRoot()));
-        dispatcher.Register(r => r.Literal("fork").Fork(dispatcher.GetRoot(), o => new List<object> {new object(), new object(), new object()}));
+        dispatcher.Register(r => r.Literal("redirect").Redirect(dispatcher.Root));
+        dispatcher.Register(r => r.Literal("fork").Fork(dispatcher.Root, o => new List<object> {new object(), new object(), new object()}));
         simple = dispatcher.Parse("command", new object());
         singleRedirect = dispatcher.Parse("redirect command", new object());
         forkedRedirect = dispatcher.Parse("fork command", new object());
