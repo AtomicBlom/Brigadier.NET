@@ -7,6 +7,7 @@ using Brigadier.NET;
 using Brigadier.NET.Builder;
 
 [MarkdownExporterAttribute.GitHub]
+[MemoryDiagnoser]
 public class ExecuteBenchmarks {
     private CommandDispatcher<object> dispatcher;
     private ParseResults<object> simple;
@@ -24,19 +25,16 @@ public class ExecuteBenchmarks {
         forkedRedirect = dispatcher.Parse("fork command", new object());
     }
 
-	[MemoryDiagnoser]
     [Benchmark]
     public void execute_simple() {
         dispatcher.Execute(simple);
     }
 
-	[MemoryDiagnoser]
 	[Benchmark]
     public void execute_single_redirect() {
         dispatcher.Execute(singleRedirect);
     }
 
-	[MemoryDiagnoser]
 	[Benchmark]
     public void execute_forked_redirect() {
         dispatcher.Execute(forkedRedirect);
