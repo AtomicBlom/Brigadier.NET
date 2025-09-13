@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Brigadier.NET.ArgumentTypes;
@@ -44,7 +44,7 @@ namespace Brigadier.NET.Tree
 		public override void Parse(StringReader reader, CommandContextBuilder<TSource> contextBuilder)
 		{
 			var start = reader.Cursor;
-			var result = Type.Parse(reader);
+			var result = Type.Parse(reader, contextBuilder.Source);
 			var parsed = new ParsedArgument<TSource, T>(start, reader.Cursor, result);
 
 			contextBuilder.WithArgument(_name, parsed);

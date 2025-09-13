@@ -1,12 +1,11 @@
 ﻿using System.Collections.Generic;
-using Brigadier.NET.Context;
 using Brigadier.NET.Exceptions;
 
 namespace Brigadier.NET.ArgumentTypes
 {
 	public class LongArgumentType : ArgumentType<long>
 	{
-		private static readonly IEnumerable<string> LongExamples = new [] {"0", "123", "-123"};
+		private static readonly IEnumerable<string> LongExamples = ["0", "123", "-123"];
 
 		internal LongArgumentType(long minimum, long maximum)
 		{
@@ -19,7 +18,7 @@ namespace Brigadier.NET.ArgumentTypes
 		public long Maximum { get; }
 
 		/// <exception cref="CommandSyntaxException" />
-		public override long Parse(IStringReader reader)
+		public long Parse(IStringReader reader)
 		{
 			var start = reader.Cursor;
 			var result = reader.ReadLong();
@@ -33,6 +32,9 @@ namespace Brigadier.NET.ArgumentTypes
 			}
 	        return result;
 		}
+
+		public IEnumerable<string> Examples => LongExamples;
+
 
 		public override bool Equals(object o)
 		{
@@ -63,7 +65,5 @@ namespace Brigadier.NET.ArgumentTypes
 				return $"longArg({Minimum}, {Maximum})";
 			}
 		}
-
-		public override IEnumerable<string> Examples => LongExamples;
 	}
 }

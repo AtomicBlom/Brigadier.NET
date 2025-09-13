@@ -1,42 +1,40 @@
 ﻿using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
-using Brigadier.NET.Context;
 using Brigadier.NET.Exceptions;
 
 namespace Brigadier.NET.ArgumentTypes
 {
 	public class FloatArgumentType : ArgumentType<float>
 	{
-		private static readonly IEnumerable<string> FloatExamples = new [] {"0", "1.2", ".5", "-1", "-.5", "-1234.56"};
-
-		private readonly float _minimum;
-		private readonly float _maximum;
+		private static readonly IEnumerable<string> FloatExamples = ["0", "1.2", ".5", "-1", "-.5", "-1234.56"];
 
 		internal FloatArgumentType(float minimum, float maximum)
 		{
-			_minimum = minimum;
-			_maximum = maximum;
+			Minimum = minimum;
+			Maximum = maximum;
 		}
 
-		public float Minimum() => _minimum;
-
-		public float Maximum() => _maximum;
+		public float Minimum { get; }
+		public float Maximum { get; }
 
 		/// <exception cref="CommandSyntaxException"></exception>
-		public override float Parse(IStringReader reader)
+		public float Parse(IStringReader reader)
 		{
 			var start = reader.Cursor;
 			var result = reader.ReadFloat();
-	        if (result < _minimum) {
+	        if (result < Minimum) {
 				reader.Cursor = start;
-				throw CommandSyntaxException.BuiltInExceptions.FloatTooLow().CreateWithContext(reader, result, _minimum);
+				throw CommandSyntaxException.BuiltInExceptions.FloatTooLow().CreateWithContext(reader, result, Minimum);
 			}
-	        if (result > _maximum) {
+	        if (result > Maximum) {
 				reader.Cursor = start;
-				throw CommandSyntaxException.BuiltInExceptions.FloatTooHigh().CreateWithContext(reader, result, _maximum);
+				throw CommandSyntaxException.BuiltInExceptions.FloatTooHigh().CreateWithContext(reader, result, Maximum);
 			}
 	        return result;
 		}
+
+		public IEnumerable<string> Examples => FloatExamples;
+
 
 		[SuppressMessage("ReSharper", "CompareOfFloatsByEqualityOperator")]
 		public override bool Equals(object o)
@@ -45,31 +43,29 @@ namespace Brigadier.NET.ArgumentTypes
 			if (!(o is FloatArgumentType)) return false;
 
 			var that = (FloatArgumentType)o;
-			return _maximum == that._maximum && _minimum == that._minimum;
+			return Maximum == that.Maximum && Minimum == that.Minimum;
 		}
 
 		public override int GetHashCode()
 		{
-			return (int)(31 * _minimum + _maximum);
+			return (int)(31 * Minimum + Maximum);
 		}
 
 		[SuppressMessage("ReSharper", "CompareOfFloatsByEqualityOperator")]
 		public override string ToString()
 		{
-			if (_minimum == -float.MaxValue && _maximum == float.MaxValue)
+			if (Minimum == -float.MaxValue && Maximum == float.MaxValue)
 			{
 				return "float()";
 			}
-			else if (_maximum == float.MaxValue)
+			else if (Maximum == float.MaxValue)
 			{
-				return $"float({_minimum:#.0})";
+				return $"float({Minimum:#.0})";
 			}
 			else
 			{
-				return $"float({_minimum:#.0}, {_maximum:#.0})";
+				return $"float({Minimum:#.0}, {Maximum:#.0})";
 			}
 		}
-
-		public override IEnumerable<string> Examples => FloatExamples;
 	}
 }

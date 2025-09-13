@@ -7,18 +7,18 @@ namespace Brigadier.NET.ArgumentTypes
 {
 	public class BoolArgumentType : ArgumentType<bool>
 	{
-		private static readonly IEnumerable<string> BoolExamples = new[] {"true", "false"};
+		private static readonly IEnumerable<string> BoolExamples = ["true", "false"];
 
 		internal BoolArgumentType()
 		{
 		}
 
-		public override bool Parse(IStringReader reader)
+		public bool Parse(IStringReader reader)
 		{
 			return reader.ReadBoolean();
 		}
 
-		public override Task<Suggestions> ListSuggestions<TSource>(CommandContext<TSource> context, SuggestionsBuilder builder)
+		public Task<Suggestions> ListSuggestions<TSource>(CommandContext<TSource> context, SuggestionsBuilder builder)
 		{
 			if ("true".StartsWith(builder.RemainingLowerCase))
 			{
@@ -31,6 +31,6 @@ namespace Brigadier.NET.ArgumentTypes
 			return builder.BuildFuture();
 		}
 
-		public override IEnumerable<string> Examples => BoolExamples;
+		public IEnumerable<string> Examples => BoolExamples;
 	}
 }

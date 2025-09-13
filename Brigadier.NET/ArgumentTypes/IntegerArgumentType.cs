@@ -5,7 +5,7 @@ namespace Brigadier.NET.ArgumentTypes
 {
 	public class IntegerArgumentType : ArgumentType<int>
 	{
-		private static readonly IEnumerable<string> IntegerExamples = new [] {"0", "123", "-123"};
+		private static readonly IEnumerable<string> IntegerExamples = ["0", "123", "-123"];
 
 		internal IntegerArgumentType(int minimum, int maximum)
 		{
@@ -18,7 +18,7 @@ namespace Brigadier.NET.ArgumentTypes
 		public int Maximum { get; }
 
 		///<exception cref="CommandSyntaxException" />
-		public override int Parse(IStringReader reader)
+		public int Parse(IStringReader reader)
 		{
 			var start = reader.Cursor;
 			var result = reader.ReadInt();
@@ -34,6 +34,9 @@ namespace Brigadier.NET.ArgumentTypes
 			}
 	        return result;
 		}
+
+		public IEnumerable<string> Examples => IntegerExamples;
+
 
 		public override bool Equals(object o)
 		{
@@ -64,7 +67,5 @@ namespace Brigadier.NET.ArgumentTypes
 				return "integer(" + Minimum + ", " + Maximum + ")";
 			}
 		}
-
-		public override IEnumerable<string> Examples => IntegerExamples;
 	}
 }

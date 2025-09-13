@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using System.Text;
-using Brigadier.NET.Context;
 using Brigadier.NET.Exceptions;
 
 namespace Brigadier.NET.ArgumentTypes
@@ -14,7 +13,7 @@ namespace Brigadier.NET.ArgumentTypes
 		public StringArgType Type { get; }
 
 		/// <exception cref="CommandSyntaxException" />
-		public override string Parse(IStringReader reader)
+		public string Parse(IStringReader reader)
 		{
 	        if (Type == StringArgType.GreedyPhrase) {
 				var text = reader.Remaining;
@@ -27,12 +26,12 @@ namespace Brigadier.NET.ArgumentTypes
 			}
 		}
 
+		public IEnumerable<string> Examples => StringExamples[Type];
+		
 		public override string ToString()
 		{
 			return "string()";
 		}
-
-		public override IEnumerable<string> Examples => StringExamples[Type];
 
 		public static string EscapeIfRequired(string input)
 		{
@@ -66,9 +65,9 @@ namespace Brigadier.NET.ArgumentTypes
 
 		private static readonly Dictionary<StringArgType, IEnumerable<string>> StringExamples = new Dictionary<StringArgType, IEnumerable<string>>
 		{
-			{ StringArgType.SingleWord, new [] { "word", "words_with_underscores" } },
-			{ StringArgType.QuotablePhrase, new [] {"\"quoted phrase\"", "word", "\"\""}},
-			{ StringArgType.GreedyPhrase, new [] {"word", "words with spaces", "\"and symbols\""}}
+			{ StringArgType.SingleWord, ["word", "words_with_underscores"] },
+			{ StringArgType.QuotablePhrase, ["\"quoted phrase\"", "word", "\"\""] },
+			{ StringArgType.GreedyPhrase, ["word", "words with spaces", "\"and symbols\""] }
 		};
 	}
 }

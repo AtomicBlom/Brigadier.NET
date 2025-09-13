@@ -6,16 +6,21 @@ using Brigadier.NET.Suggestion;
 
 namespace Brigadier.NET.ArgumentTypes
 {
-	public abstract class ArgumentType<T> 
+	public interface ArgumentType<out T> 
 	{
 		/// <exception cref="CommandSyntaxException"></exception>
-		public abstract T Parse(IStringReader reader);
-		
-		public virtual Task<Suggestions> ListSuggestions<TSource>(CommandContext<TSource> context, SuggestionsBuilder builder)
+		T Parse(IStringReader reader);
+
+		T Parse<TSource>(StringReader reader, TSource source)
+		{
+			return Parse(reader);
+		}
+
+		Task<Suggestions> ListSuggestions<TSource>(CommandContext<TSource> context, SuggestionsBuilder builder)
 		{
 			return Suggestions.Empty();
 		}
 
-		public virtual IEnumerable<string> Examples => new string[0];
+		IEnumerable<string> Examples => [];
 	}
 }

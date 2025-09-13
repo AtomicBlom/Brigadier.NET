@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -215,99 +215,17 @@ namespace Brigadier.NET
 				}
 			}
 
-			var result = 0;
-			var successfulForks = 0;
-			var forked = false;
-			var foundCommand = false;
 			var command = parse.Reader.String;
 			var original = parse.Context.Build(command);
 			var contexts = new List<CommandContext<TSource>> {original};
-			List<CommandContext<TSource>> next = null;
 
-			while (contexts != null)
-			{
-				var size = contexts.Count;
-				for (var i = 0; i < size; i++)
-				{
-					var context = contexts[i];
-					var child = context.Child;
-					if (child != null)
-					{
-						forked |= context.IsForked();
-						if (child.HasNodes())
-						{
-							foundCommand = true;
-							var modifier = context.RedirectModifier;
-							if (modifier == null)
-							{
-								if (next == null)
-								{
-									next = new List<CommandContext<TSource>>(1);
-								}
-
-								next.Add(child.CopyFor(context.Source));
-							}
-							else
-							{
-								try
-								{
-									var results = modifier(context);
-									if (results.Count > 0)
-									{
-										if (next == null)
-										{
-											next = new List<CommandContext<TSource>>(results.Count());
-										}
-
-										foreach (var source in results)
-										{
-											next.Add(child.CopyFor(source));
-										}
-									}
-								}
-								catch (CommandSyntaxException)
-								{
-									Consumer(context, false, 0);
-									if (!forked)
-									{
-										throw;
-									}
-								}
-							}
-						}
-					}
-					else if (context.Command != null)
-					{
-						foundCommand = true;
-						try
-						{
-							var value = context.Command(context);
-							result += value;
-							Consumer(context, true, value);
-							successfulForks++;
-						}
-						catch (CommandSyntaxException)
-						{
-							Consumer(context, false, 0);
-							if (!forked)
-							{
-								throw;
-							}
-						}
-					}
-				}
-
-				contexts = next;
-				next = null;
-			}
-
-			if (!foundCommand)
+			if (!original.TryFlatten(out var chain))
 			{
 				Consumer(original, false, 0);
 				throw CommandSyntaxException.BuiltInExceptions.DispatcherUnknownCommand().CreateWithContext(parse.Reader);
 			}
-
-			return forked ? successfulForks : result;
+			
+			return chain.ExecuteAll(original.Source, Consumer);
 		}
 
 		/**

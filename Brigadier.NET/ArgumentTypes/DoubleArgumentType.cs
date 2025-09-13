@@ -1,13 +1,12 @@
 ﻿using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
-using Brigadier.NET.Context;
 using Brigadier.NET.Exceptions;
 
 namespace Brigadier.NET.ArgumentTypes
 {
 	public class DoubleArgumentType : ArgumentType<double>
 	{
-		private static readonly IEnumerable<string> DoubleExamples = new [] {"0", "1.2", ".5", "-1", "-.5", "-1234.56"};
+		private static readonly IEnumerable<string> DoubleExamples = ["0", "1.2", ".5", "-1", "-.5", "-1234.56"];
 
 		internal DoubleArgumentType(double minimum, double maximum)
 		{
@@ -21,7 +20,7 @@ namespace Brigadier.NET.ArgumentTypes
 
 
 		/// <exception cref="CommandSyntaxException" />
-		public override double Parse(IStringReader reader) 
+		public double Parse(IStringReader reader) 
 		{
 			var start = reader.Cursor;
 			var result = reader.ReadDouble();
@@ -36,6 +35,9 @@ namespace Brigadier.NET.ArgumentTypes
 			}
 	        return result;
 		}
+
+		public IEnumerable<string> Examples => DoubleExamples;
+
 
 		[SuppressMessage("ReSharper", "CompareOfFloatsByEqualityOperator")]
 		public override bool Equals(object o)
@@ -68,7 +70,5 @@ namespace Brigadier.NET.ArgumentTypes
 				return $"double({Minimum:#.0}, {Maximum:#.0})";
 			}
 		}
-
-		public override IEnumerable<string> Examples => DoubleExamples;
 	}
 }
