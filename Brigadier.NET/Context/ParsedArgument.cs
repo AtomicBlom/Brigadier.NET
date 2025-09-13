@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using Brigadier.NET.Util;
 
 namespace Brigadier.NET.Context
 {
@@ -10,7 +9,7 @@ namespace Brigadier.NET.Context
 		object Result { get; }
 	}
 
-	public struct ParsedArgument<TSource, T> : IParsedArgument, IEquatable<ParsedArgument<TSource, T>>
+	public struct ParsedArgument<TSource, T> : IParsedArgument, IEquatable<ParsedArgument<TSource, T>> where T : notnull
 	{
 		private readonly T _result;
 
@@ -24,7 +23,7 @@ namespace Brigadier.NET.Context
 
 		public object Result => _result;
 
-		public override bool Equals(object obj)
+		public override bool Equals(object? obj)
 		{
 			if (ReferenceEquals(null, obj)) return false;
 			if (ReferenceEquals(this, obj)) return true;
@@ -40,9 +39,7 @@ namespace Brigadier.NET.Context
 
 		public override int GetHashCode()
 		{
-			return HashCode.Start
-				.Hash(Range)
-				.Hash(_result);
+			return HashCode.Combine(Range, _result);
 		}
 	}
 }

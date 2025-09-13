@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using Brigadier.NET.Builder;
 using Brigadier.NET.Context;
@@ -16,7 +15,7 @@ namespace Brigadier.NET.Tree
 		private readonly IDictionary<string, LiteralCommandNode<TSource>> _literals = new Dictionary<string, LiteralCommandNode<TSource>>();
 		private readonly IDictionary<string, ArgumentCommandNode<TSource>> _arguments = new Dictionary<string, ArgumentCommandNode<TSource>>();
 
-		protected CommandNode(Command<TSource> command, Predicate<TSource> requirement, CommandNode<TSource> redirect, RedirectModifier<TSource> modifier, bool forks)
+		protected CommandNode(Command<TSource>? command, Predicate<TSource> requirement, CommandNode<TSource>? redirect, RedirectModifier<TSource>? modifier, bool forks)
 		{
 			Command = command;
 			Requirement = requirement;
@@ -25,20 +24,20 @@ namespace Brigadier.NET.Tree
 			IsFork = forks;
 		}
 
-		public Command<TSource> Command { get; set; }
+		public Command<TSource>? Command { get; set; }
 
 		//PortNote: ICollection might be needed
 		public ICollection<CommandNode<TSource>> Children => _children.Values;
 
-		//PortNode: .NET Dictionaries throw if the key does not exist.
-		public CommandNode<TSource> GetChild(string name)
+		//PortNote: .NET Dictionaries throw if the key does not exist.
+		public CommandNode<TSource>? GetChild(string name)
 		{
 			return _children.TryGetValue(name, out var node) ? node : null;
 		}
 
-		public CommandNode<TSource> Redirect { get; }
+		public CommandNode<TSource>? Redirect { get; }
 
-		public RedirectModifier<TSource> RedirectModifier { get; }
+		public RedirectModifier<TSource>? RedirectModifier { get; }
 
 		public bool CanUse(TSource source)
 		{
@@ -124,7 +123,7 @@ namespace Brigadier.NET.Tree
 					if (matches.Count > 0)
 					{
 						consumer(this, child, sibling, matches);
-						matches = new HashSet<string>();
+						matches = [];
 					}
 				}
 

@@ -6,7 +6,7 @@ namespace Brigadier.NET.Suggestion
 {
 	public class SuggestionsBuilder
 	{
-		private readonly List<Suggestion> _result = new List<Suggestion>();
+		private readonly List<Suggestion> _result = [];
 
 		public SuggestionsBuilder(string input, string inputLowerCase, int start)
 		{

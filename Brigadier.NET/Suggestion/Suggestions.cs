@@ -3,13 +3,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Brigadier.NET.Context;
-using Brigadier.NET.Util;
 
 namespace Brigadier.NET.Suggestion
 {
 	public class Suggestions : IEquatable<Suggestions>
 	{
-		private static readonly Suggestions NoSuggestions = new Suggestions(StringRange.At(0), new List<Suggestion>());
+		private static readonly Suggestions NoSuggestions = new Suggestions(StringRange.At(0), []);
 
 		public Suggestions(StringRange range, List<Suggestion> suggestions)
 		{
@@ -44,9 +43,7 @@ namespace Brigadier.NET.Suggestion
 
 		public override int GetHashCode()
 		{
-			return HashCode.Start
-				.Hash(Range)
-				.Hash(List);
+			return HashCode.Combine(Range, List);
 		}
 
 		public override string ToString()

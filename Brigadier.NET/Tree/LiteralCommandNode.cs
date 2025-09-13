@@ -5,13 +5,12 @@ using Brigadier.NET.Builder;
 using Brigadier.NET.Context;
 using Brigadier.NET.Exceptions;
 using Brigadier.NET.Suggestion;
-using Brigadier.NET.Util;
 
 namespace Brigadier.NET.Tree
 {
 	public class LiteralCommandNode<TSource> : CommandNode<TSource>, IEquatable<LiteralCommandNode<TSource>>
 	{
-		public LiteralCommandNode(string literal, Command< TSource > command, Predicate<TSource> requirement, CommandNode<TSource> redirect, RedirectModifier<TSource> modifier, bool forks)
+		public LiteralCommandNode(string literal, Command<TSource>? command, Predicate<TSource> requirement, CommandNode<TSource>? redirect, RedirectModifier<TSource>? modifier, bool forks)
 			: base(command, requirement, redirect, modifier, forks)
 		{
 			Literal = literal;
@@ -93,8 +92,8 @@ namespace Brigadier.NET.Tree
 
 		public override int GetHashCode()
 		{
-			return HashCode.Start
-				.Hash(Literal);
+			return HashCode
+				.Combine(Literal);
 		}
 
 		public override string UsageText => Literal;
@@ -114,6 +113,6 @@ namespace Brigadier.NET.Tree
 
 		protected override string SortedKey => Literal;
 
-		public override IEnumerable<string> Examples => new [] { Literal};
+		public override IEnumerable<string> Examples => [Literal];
 	}
 }

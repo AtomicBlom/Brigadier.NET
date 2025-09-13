@@ -2,16 +2,29 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Brigadier.NET.Tree;
-using Brigadier.NET.Util;
 
 namespace Brigadier.NET.Context
 {
 	public class CommandContext<TSource> : IEquatable<CommandContext<TSource>>
 	{
 		private readonly IDictionary<string, IParsedArgument> _arguments;
+		/// <summary>
+		/// <para>
+		/// Special modifier for running this context and children. <br />
+		/// Only relevant if it's not last in chain.
+		/// </para>
+		/// <para>
+		/// Effects:
+		/// <list type="bullet">
+		/// <item><term>Exceptions from <see cref="Command"/> or <see cref="RedirectModifier"/> will be ignored</term></item>
+		/// <item><term>Result of command will be number of elements run by element in chain (instead of sum of <see cref="Command"/> results</term> </item>
+		/// 
+		/// </list>
+		/// </para>
+		/// </summary>
 		private readonly bool _forks;
 
-	    public CommandContext(TSource source, string input, IDictionary<string, IParsedArgument> arguments, Command<TSource> command, CommandNode<TSource> rootNode, List<ParsedCommandNode<TSource>> nodes, StringRange range, CommandContext<TSource> child, RedirectModifier<TSource> modifier, bool forks)
+	    public CommandContext(TSource source, string input, IDictionary<string, IParsedArgument> arguments, Command<TSource>? command, CommandNode<TSource> rootNode, List<ParsedCommandNode<TSource>> nodes, StringRange range, CommandContext<TSource>? child, RedirectModifier<TSource>? modifier, bool forks)
 		{
 			Source = source;
 			Input = input;
@@ -27,14 +40,14 @@ namespace Brigadier.NET.Context
 
 		public CommandContext<TSource> CopyFor(TSource source)
 		{
-			if (Source.Equals(source))
+			if (Source?.Equals(source) ?? false)
 			{
 				return this;
 			}
 			return new CommandContext<TSource>(source, Input, _arguments, Command, RootNode, Nodes, Range, Child, RedirectModifier, _forks);
 		}
 
-		public CommandContext<TSource> Child { get; }
+		public CommandContext<TSource>? Child { get; }
 
 		public CommandContext<TSource> LastChild
 		{
@@ -50,7 +63,9 @@ namespace Brigadier.NET.Context
 			}
 		}
 
-		public Command<TSource> Command { get; }
+
+		/// <summary>Executable part of command. Will be run only when context is last in chain.</summary>
+		public Command<TSource>? Command { get; }
 
 		public TSource Source { get; }
 
@@ -94,16 +109,20 @@ namespace Brigadier.NET.Context
 
 		public override int GetHashCode()
 		{
-			return HashCode.Start
-				.Hash(Source)
-				.Hash(_arguments)
-				.Hash(Command)
-				.Hash(RootNode)
-				.Hash(Nodes)
-				.Hash(Child);
+			return HashCode.Combine(
+				Source, 
+				_arguments, 
+				Command,
+				RootNode, 
+				Nodes, 
+				Child
+			);
 		}
 
-		public RedirectModifier<TSource> RedirectModifier { get; }
+		/// <summary>
+		/// Modifier of source. Will be run only when context has children (i.e. is not last in chain).
+		/// </summary>
+		public RedirectModifier<TSource>? RedirectModifier { get; }
 
 		public StringRange Range { get; }
 

@@ -4,13 +4,12 @@ using System.Threading.Tasks;
 using Brigadier.NET.Builder;
 using Brigadier.NET.Context;
 using Brigadier.NET.Suggestion;
-using Brigadier.NET.Util;
 
 namespace Brigadier.NET.Tree
 {
 	public class RootCommandNode<TSource> : CommandNode<TSource>, IEquatable<RootCommandNode<TSource>>
 	{
-		public RootCommandNode() : base(null, (c) => true, null, s => new [] { s.Source }, false)
+		public RootCommandNode() : base(null, (c) => true, null, s => [s.Source], false)
 		{
 			
 		}
@@ -47,7 +46,7 @@ namespace Brigadier.NET.Tree
 
 		public override int GetHashCode()
 		{
-			return HashCode.Start;
+			return HashCode.Combine(GetType());
 		}
 
 		public override IArgumentBuilder<TSource, CommandNode<TSource>> CreateBuilder()

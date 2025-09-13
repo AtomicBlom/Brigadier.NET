@@ -45,7 +45,7 @@ namespace Brigadier.NET.Exceptions
 
 		public IMessage RawMessage() => _message;
 
-		public string Context
+		public string? Context
 		{
 			get
 			{
@@ -72,7 +72,7 @@ namespace Brigadier.NET.Exceptions
 
 		public ICommandExceptionType Type { get; }
 
-		public string Input { get; }
+		public string? Input { get; }
 
 		public int Cursor { get; }
 	}

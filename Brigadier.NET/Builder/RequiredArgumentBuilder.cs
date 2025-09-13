@@ -8,15 +8,15 @@ namespace Brigadier.NET.Builder
 	{
 		// ReSharper disable once UnusedParameter.Global
 		// context is used to infer generic parameters in API
-		public static RequiredArgumentBuilder<TSource, T> Argument<TSource, T>(this IArgumentContext<TSource> context, string name, ArgumentType<T> type)
+		public static RequiredArgumentBuilder<TSource, T> Argument<TSource, T>(this IArgumentContext<TSource> context, string name, ArgumentType<T> type) where T : notnull
 		{
 			return RequiredArgumentBuilder<TSource, T>.RequiredArgument(name, type);
 		}
 	}
 
-	public class RequiredArgumentBuilder<TSource, T> : ArgumentBuilder<TSource, RequiredArgumentBuilder<TSource, T>, ArgumentCommandNode<TSource, T>>
+	public class RequiredArgumentBuilder<TSource, T> : ArgumentBuilder<TSource, RequiredArgumentBuilder<TSource, T>, ArgumentCommandNode<TSource, T>> where T : notnull
 	{
-		private SuggestionProvider<TSource> _suggestionsProvider;
+		private SuggestionProvider<TSource>? _suggestionsProvider;
 
 		private RequiredArgumentBuilder(string name, ArgumentType<T> type)
 		{
@@ -29,7 +29,7 @@ namespace Brigadier.NET.Builder
 			return new RequiredArgumentBuilder<TSource, T>(name, type);
 		}
 
-		public RequiredArgumentBuilder<TSource, T> Suggests(SuggestionProvider<TSource> provider)
+		public RequiredArgumentBuilder<TSource, T> Suggests(SuggestionProvider<TSource>? provider)
 		{
 			_suggestionsProvider = provider;
 			return This;

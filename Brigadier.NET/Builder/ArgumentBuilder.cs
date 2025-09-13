@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using Brigadier.NET.Tree;
 
 namespace Brigadier.NET.Builder
@@ -57,7 +56,7 @@ namespace Brigadier.NET.Builder
 			return This;
 		}
 
-		public Command<TSource> Command { get; private set; }
+		public Command<TSource>? Command { get; private set; }
 
 		public TThis Requires(Predicate<TSource> requirement)
 		{
@@ -65,16 +64,16 @@ namespace Brigadier.NET.Builder
 			return This;
 		}
 
-		public Predicate<TSource> Requirement { get; private set; } = s => true;
+		public Predicate<TSource> Requirement { get; private set; } = _ => true;
 
 		public TThis Redirect(CommandNode<TSource> target)
 		{
 			return Forward(target, null, false);
 		}
 
-		public TThis Redirect(CommandNode<TSource> target, SingleRedirectModifier<TSource> modifier)
+		public TThis Redirect(CommandNode<TSource> target, SingleRedirectModifier<TSource>? modifier)
 		{
-			return Forward(target, modifier == null ? (RedirectModifier<TSource>)null: o => new[] { modifier(o) }, false);
+			return Forward(target, modifier == null ? null: o => [modifier(o)], false);
 		}
 
 		public TThis Fork(CommandNode<TSource> target, RedirectModifier<TSource> modifier)
@@ -82,7 +81,7 @@ namespace Brigadier.NET.Builder
 			return Forward(target, modifier, true);
 		}
 
-		public TThis Forward(CommandNode<TSource> target, RedirectModifier<TSource> modifier, bool fork)
+		public TThis Forward(CommandNode<TSource>? target, RedirectModifier<TSource>? modifier, bool fork)
 		{
 			if (_arguments.Children.Count > 0)
 			{
@@ -95,9 +94,9 @@ namespace Brigadier.NET.Builder
 			return This;
 		}
 
-		public CommandNode<TSource> RedirectTarget { get; private set; }
+		public CommandNode<TSource>? RedirectTarget { get; private set; }
 
-		public RedirectModifier<TSource> RedirectModifier { get; private set; }
+		public RedirectModifier<TSource>? RedirectModifier { get; private set; }
 
 		public bool IsFork { get; private set; }
 

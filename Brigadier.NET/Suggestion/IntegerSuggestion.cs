@@ -1,12 +1,11 @@
 ﻿using System;
 using Brigadier.NET.Context;
-using Brigadier.NET.Util;
 
 namespace Brigadier.NET.Suggestion
 {
 	public class IntegerSuggestion : Suggestion, IEquatable<IntegerSuggestion>
 	{
-		public IntegerSuggestion(StringRange range, int value, IMessage tooltip = null)
+		public IntegerSuggestion(StringRange range, int value, IMessage? tooltip = null)
 			: base(range, value.ToString(), tooltip)
 		{
 			Value = value;
@@ -32,8 +31,7 @@ namespace Brigadier.NET.Suggestion
 
 		public override int GetHashCode()
 		{
-			return HashCode.Start
-				.Hash(Value);
+			return HashCode.Combine(GetType(), Value);
 		}
 
 		public override string ToString()

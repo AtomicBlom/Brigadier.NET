@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Brigadier.NET.ArgumentTypes;
@@ -6,25 +6,24 @@ using Brigadier.NET.Builder;
 using Brigadier.NET.Context;
 using Brigadier.NET.Exceptions;
 using Brigadier.NET.Suggestion;
-using Brigadier.NET.Util;
 
 namespace Brigadier.NET.Tree
 {
 	public abstract class ArgumentCommandNode<TSource> : CommandNode<TSource> {
-		protected ArgumentCommandNode(Command<TSource> command, Predicate<TSource> requirement, CommandNode<TSource> redirect, RedirectModifier<TSource> modifier, bool forks) 
+		protected ArgumentCommandNode(Command<TSource>? command, Predicate<TSource> requirement, CommandNode<TSource>? redirect, RedirectModifier<TSource>? modifier, bool forks) 
 			: base(command, requirement, redirect, modifier, forks)
 		{
 		}
 	}
 
-	public class ArgumentCommandNode<TSource, T> : ArgumentCommandNode<TSource>, IEquatable<ArgumentCommandNode<TSource, T>>
+	public class ArgumentCommandNode<TSource, T> : ArgumentCommandNode<TSource>, IEquatable<ArgumentCommandNode<TSource, T>> where T : notnull
 	{
 		private const string UsageArgumentOpen = "<";
 		private const string UsageArgumentClose = ">";
 
 		private readonly string _name;
 
-		public ArgumentCommandNode(string name, ArgumentType<T> type, Command<TSource> command, Predicate<TSource> requirement, CommandNode<TSource> redirect, RedirectModifier<TSource> modifier, bool forks, SuggestionProvider<TSource> customSuggestions) :
+		public ArgumentCommandNode(string name, ArgumentType<T> type, Command<TSource>? command, Predicate<TSource> requirement, CommandNode<TSource>? redirect, RedirectModifier<TSource>? modifier, bool forks, SuggestionProvider<TSource>? customSuggestions) :
 			base(command, requirement, redirect, modifier, forks)
 		{
 			_name = name;
@@ -38,7 +37,7 @@ namespace Brigadier.NET.Tree
 
 		public override string UsageText => $"{UsageArgumentOpen}{Name}{UsageArgumentClose}";
 
-		public SuggestionProvider<TSource> CustomSuggestions { get; }
+		public SuggestionProvider<TSource>? CustomSuggestions { get; }
 
 		/// <exception>CommandSyntaxException</exception>
 		public override void Parse(StringReader reader, CommandContextBuilder<TSource> contextBuilder)
@@ -107,9 +106,7 @@ namespace Brigadier.NET.Tree
 
 		public override int GetHashCode()
 		{
-			return HashCode.Start
-				.Hash(_name)
-				.Hash(Type);
+			return HashCode.Combine(_name, Type);
 		}
 
 		protected override string SortedKey => _name;

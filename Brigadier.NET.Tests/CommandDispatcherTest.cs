@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using Brigadier.NET.Builder;
 using Brigadier.NET.Context;
 using Brigadier.NET.Exceptions;
@@ -263,7 +262,7 @@ namespace Brigadier.NET.Tests
 			var modifier = Substitute.For<RedirectModifier<object>>();
 			var source1 = new object();
 			var source2 = new object();
-			modifier.Invoke(Arg.Is<CommandContext<object>>(s => s.Source == _source)).Returns(new[] {source1, source2});
+			modifier.Invoke(Arg.Is<CommandContext<object>>(s => s.Source == _source)).Returns([source1, source2]);
 
 			var concreteNode = _subject.Register(r => r.Literal("actual").Executes(_command));
 			var redirectNode = _subject.Register(r => r.Literal("redirected").Fork(_subject.GetRoot(), modifier));

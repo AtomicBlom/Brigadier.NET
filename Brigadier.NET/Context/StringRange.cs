@@ -1,5 +1,4 @@
 ﻿using System;
-using Brigadier.NET.Util;
 
 namespace Brigadier.NET.Context
 {
@@ -56,9 +55,7 @@ namespace Brigadier.NET.Context
 
 		public override int GetHashCode()
 		{
-			return HashCode.Start
-				.Hash(Start)
-				.Hash(End);
+			return HashCode.Combine(Start, End);
 		}
 
 		public override string ToString()

@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using Brigadier.NET.Tree;
 
 namespace Brigadier.NET.Context
@@ -8,7 +7,7 @@ namespace Brigadier.NET.Context
 	public class CommandContextBuilder<TSource>
 	{
 		private readonly IDictionary<string, IParsedArgument> _arguments;
-		private RedirectModifier<TSource> _modifier;
+		private RedirectModifier<TSource>? _modifier;
 		private bool _forks;
 
 		public CommandContextBuilder(CommandDispatcher<TSource> dispatcher, TSource source, CommandNode<TSource> rootNode, int start)
@@ -18,7 +17,7 @@ namespace Brigadier.NET.Context
 			Source = source;
 			Range = StringRange.At(start);
 			_arguments = new Dictionary<string, IParsedArgument>();
-			Nodes = new List<ParsedCommandNode<TSource>>();
+			Nodes = [];
 		}
 
 		public CommandContextBuilder(CommandDispatcher<TSource> dispatcher, TSource source, CommandNode<TSource> rootNode, StringRange range, IDictionary<string, IParsedArgument> arguments, List<ParsedCommandNode<TSource>> nodes)
@@ -52,7 +51,7 @@ namespace Brigadier.NET.Context
 			return _arguments;
 		}
 
-		public CommandContextBuilder<TSource> WithCommand(Command<TSource> command)
+		public CommandContextBuilder<TSource> WithCommand(Command<TSource>? command)
 		{
 			Command = command;
 			return this;
@@ -85,7 +84,7 @@ namespace Brigadier.NET.Context
 			return this;
 		}
 
-		public CommandContextBuilder<TSource> Child { get; private set; }
+		public CommandContextBuilder<TSource>? Child { get; private set; }
 
 		public CommandContextBuilder<TSource> LastChild
 		{
@@ -101,7 +100,7 @@ namespace Brigadier.NET.Context
 		}
 		
 
-		public Command<TSource> Command { get; private set; }
+		public Command<TSource>? Command { get; private set; }
 
 		public List<ParsedCommandNode<TSource>> Nodes { get; }
 
@@ -126,7 +125,7 @@ namespace Brigadier.NET.Context
 					}
 					else if (Nodes.Count > 0)
 					{
-						var last = Nodes[Nodes.Count - 1];
+						var last = Nodes[^1];
 						return new SuggestionContext<TSource>(last.Node, last.Range.End + 1);
 					}
 					else

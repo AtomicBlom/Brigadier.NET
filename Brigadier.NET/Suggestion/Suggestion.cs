@@ -1,13 +1,12 @@
 ﻿using System;
 using System.Text;
 using Brigadier.NET.Context;
-using Brigadier.NET.Util;
 
 namespace Brigadier.NET.Suggestion
 {
 	public class Suggestion : IComparable<Suggestion>, IEquatable<Suggestion>
 	{
-		public Suggestion(StringRange range, string text, IMessage tooltip = null)
+		public Suggestion(StringRange range, string text, IMessage? tooltip = null)
 		{
 			Range = range;
 			Text = text;
@@ -18,7 +17,7 @@ namespace Brigadier.NET.Suggestion
 
 		public string Text { get; }
 
-		public IMessage Tooltip { get; }
+		public IMessage? Tooltip { get; }
 
 		public string Apply(string input)
 		{
@@ -58,10 +57,7 @@ namespace Brigadier.NET.Suggestion
 
 		public override int GetHashCode()
 		{
-			return HashCode.Start
-				.Hash(Range)
-				.Hash(Text)
-				.Hash(Tooltip);
+			return HashCode.Combine(Range, Text, Tooltip);
 		}
 
 		public override string ToString()

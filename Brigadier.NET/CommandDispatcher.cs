@@ -52,7 +52,7 @@ namespace Brigadier.NET
 		public CommandDispatcher(RootCommandNode<TSource> root)
 		{
 			_root = root;
-			_hasCommand = input => input != null && (input.Command != null || input.Children.Any(c => _hasCommand(c)));
+			_hasCommand = input => input != null && (input.Command != null || input.Children.Any(c => _hasCommand?.Invoke(c) ?? false));
 		}
 
 		/**
@@ -296,8 +296,8 @@ namespace Brigadier.NET
 		private ParseResults<TSource> ParseNodes(CommandNode<TSource> node, StringReader originalReader, CommandContextBuilder<TSource> contextSoFar)
 		{
 			var source = contextSoFar.Source;
-			IDictionary<CommandNode<TSource>, CommandSyntaxException> errors = null;
-			List<ParseResults<TSource>> potentials = null;
+			IDictionary<CommandNode<TSource>, CommandSyntaxException>? errors = null;
+			List<ParseResults<TSource>>? potentials = null;
 			var cursor = originalReader.Cursor;
 
 			foreach (var child in node.GetRelevantNodes(originalReader))
@@ -505,7 +505,7 @@ namespace Brigadier.NET
 			return result;
 		}
 
-		private string GetSmartUsage(CommandNode<TSource> node, TSource source, bool optional, bool deep)
+		private string? GetSmartUsage(CommandNode<TSource> node, TSource source, bool optional, bool deep)
 		{
 			if (!node.CanUse(source))
 			{
@@ -663,7 +663,7 @@ namespace Brigadier.NET
 		public List<string> GetPath(CommandNode<TSource> target)
 		{
 			var nodes = new List<List<CommandNode<TSource>>>();
-			AddPaths(_root, nodes, new List<CommandNode<TSource>>());
+			AddPaths(_root, nodes, []);
 
 			foreach (var list in nodes)
 			{
@@ -682,7 +682,7 @@ namespace Brigadier.NET
 				}
 			}
 
-			return new List<string>();
+			return [];
 		}
 
 /**
@@ -696,9 +696,9 @@ namespace Brigadier.NET
  * @param path a generated path to a node
  * @return the node at the given path, or null if not found
  */
-		public CommandNode<TSource> FindNode(IEnumerable<string> path)
+		public CommandNode<TSource>? FindNode(IEnumerable<string> path)
 		{
-			CommandNode<TSource> node = _root;
+			CommandNode<TSource>? node = _root;
 			foreach (var name in path)
 			{
 				node = node.GetChild(name);

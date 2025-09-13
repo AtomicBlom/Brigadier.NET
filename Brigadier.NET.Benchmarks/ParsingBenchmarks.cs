@@ -3,7 +3,6 @@
 
 using System;
 using BenchmarkDotNet.Attributes;
-using BenchmarkDotNet.Horology;
 using Brigadier.NET;
 using Brigadier.NET.Builder;
 using Brigadier.NET.Tree;

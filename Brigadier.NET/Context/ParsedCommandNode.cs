@@ -1,6 +1,5 @@
 ﻿using System;
 using Brigadier.NET.Tree;
-using Brigadier.NET.Util;
 
 namespace Brigadier.NET.Context
 {
@@ -37,9 +36,7 @@ namespace Brigadier.NET.Context
 
 		public override int GetHashCode()
 		{
-			return HashCode.Start
-				.Hash(Node)
-				.Hash(Range);
+			return HashCode.Combine(Node, Range);
 		}
 	}
 }
