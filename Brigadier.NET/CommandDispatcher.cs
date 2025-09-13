@@ -40,7 +40,7 @@ namespace Brigadier.NET
 		 *
 		 * @param consumer the new result consumer to be called
 		 */
-		private ResultConsumer<TSource> Consumer { get; } = (c, s, r) => { };
+		public ResultConsumer<TSource> Consumer { get; set; } = (c, s, r) => { };
 		
 		/**
 		 * Create a new {@link CommandDispatcher} with the specified root node.
@@ -217,7 +217,6 @@ namespace Brigadier.NET
 
 			var command = parse.Reader.String;
 			var original = parse.Context.Build(command);
-			var contexts = new List<CommandContext<TSource>> {original};
 
 			if (!original.TryFlatten(out var chain))
 			{

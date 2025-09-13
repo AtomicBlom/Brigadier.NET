@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using Brigadier.NET.Builder;
 using Brigadier.NET.Context;
 using Brigadier.NET.Exceptions;
@@ -15,6 +17,7 @@ namespace Brigadier.NET.Tests
 		private readonly CommandDispatcher<object> _subject;
 		private readonly Command<object> _command;
 		private readonly object _source = Substitute.For<object>();
+		private readonly ResultConsumer<object> _consumer = Substitute.For<ResultConsumer<object>>();
 
 		public CommandDispatcherTest()
 		{
@@ -255,51 +258,52 @@ namespace Brigadier.NET.Tests
 			_command.Received().Invoke(Arg.Any<CommandContext<object>>());
 		}
 
-		/*
+		[Fact]
+		public void TestCorrectExecuteContextAfterRedirect()
+		{
+			var subject = new CommandDispatcher<int>();
 
-    @Test
-    public void testCorrectExecuteContextAfterRedirect() throws Exception {
-        final CommandDispatcher<Integer> subject = new CommandDispatcher<>();
+			var root = subject.Root;
 
-        final RootCommandNode<Integer> root = subject.getRoot();
-        final LiteralArgumentBuilder<Integer> add = literal("add");
-        final LiteralArgumentBuilder<Integer> blank = literal("blank");
-        final RequiredArgumentBuilder<Integer, Integer> addArg = argument("value", integer());
-        final LiteralArgumentBuilder<Integer> run = literal("run");
+			var add = LiteralArgumentBuilder<int>.LiteralArgument("add");
+			var blank = LiteralArgumentBuilder<int>.LiteralArgument("blank");
+			var addArg = RequiredArgumentBuilder<int, int>.RequiredArgument("value", Integer());
+			var run = LiteralArgumentBuilder<int>.LiteralArgument("run");
 
-        subject.register(add.then(addArg.redirect(root, c -> c.getSource() + getInteger(c, "value"))));
-        subject.register(blank.redirect(root));
-        subject.register(run.executes(CommandContext::getSource));
 
-        assertThat(subject.execute("run", 0), is(0));
-        assertThat(subject.execute("run", 1), is(1));
+			subject.Register(add.Then(addArg.Redirect(root, c => c.Source + c.GetArgument<int>("value"))));
+			subject.Register(blank.Redirect(root));
+			subject.Register(run.Executes(c => c.Source));
 
-        assertThat(subject.execute("add 5 run", 1), is(1 + 5));
-        assertThat(subject.execute("add 5 add 6 run", 2), is(2 + 5 + 6));
-        assertThat(subject.execute("add 5 blank run", 1), is(1 + 5));
-        assertThat(subject.execute("blank add 5 run", 1), is(1 + 5));
-        assertThat(subject.execute("add 5 blank add 6 run", 2), is(2 + 5 + 6));
-        assertThat(subject.execute("add 5 blank blank add 6 run", 2), is(2 + 5 + 6));
-    }
+			subject.Execute("run", 0).Should().Be(0);
+			subject.Execute("run", 1).Should().Be(1);
 
-    @Test
-    public void testSharedRedirectAndExecuteNodes() throws CommandSyntaxException {
-        final CommandDispatcher<Integer> subject = new CommandDispatcher<>();
+			subject.Execute("add 5 run", 1).Should().Be(1 + 5);
+			subject.Execute("add 5 add 6 run", 2).Should().Be(2 + 5 + 6);
+			subject.Execute("add 5 blank run", 1).Should().Be(1 + 5);
+			subject.Execute("blank add 5 run", 1).Should().Be(1 + 5);
+			subject.Execute("add 5 blank add 6 run", 2).Should().Be(2 + 5 + 6);
+			subject.Execute("add 5 blank blank add 6 run", 2).Should().Be(2 + 5 + 6);
+		}
 
-        final RootCommandNode<Integer> root = subject.getRoot();
-        final LiteralArgumentBuilder<Integer> add = literal("add");
-        final RequiredArgumentBuilder<Integer, Integer> addArg = argument("value", integer());
+		[Fact]
+		public void TestSharedRedirectAndExecuteNodes()
+		{
+			var subject = new CommandDispatcher<int>();
+			
+			var root = subject.Root;
+			var add = LiteralArgumentBuilder<int>.LiteralArgument("add");
+			var addArg = RequiredArgumentBuilder<int, int>.RequiredArgument("value", Integer());
 
-        subject.register(add.then(
-            addArg
-                .redirect(root, c -> c.getSource() + getInteger(c, "value"))
-                .executes(CommandContext::getSource)
-        ));
+			subject.Register(add.Then(
+				addArg
+					.Redirect(root, c => c.Source + c.GetArgument<int>("value"))
+					.Executes(c => c.Source)
+			));
 
-        assertThat(subject.execute("add 5", 1), is(1));
-        assertThat(subject.execute("add 5 add 6", 1), is(1 + 5));
-    }
-		 */
+			subject.Execute("add 5", 1).Should().Be(1); // executes node itself, no redirect
+			subject.Execute("add 5 add 6", 1).Should().Be(1 + 5); // first redirect only
+		}
 
 		[Fact]
 		public void TestExecuteRedirected()
@@ -335,34 +339,36 @@ namespace Brigadier.NET.Tests
 			_command.Received(1).Invoke(Arg.Is<CommandContext<object>>(c => c.Source == source2));
 		}
 
-		/*
-    @Test
-    public void testIncompleteRedirectShouldThrow() {
-        final LiteralCommandNode<Object> foo = subject.register(literal("foo")
-            .then(literal("bar")
-                .then(argument("value", integer()).executes(context -> IntegerArgumentType.getInteger(context, "value"))))
-            .then(literal("awa").executes(context -> 2)));
-        subject.register(literal("baz").redirect(foo));
-        try {
-            subject.execute("baz bar", source);
-            fail("Should have thrown an exception");
-        } catch (CommandSyntaxException e) {
-            assertThat(e.getType(), is(CommandSyntaxException.BUILT_IN_EXCEPTIONS.dispatcherUnknownCommand()));
-        }
-    }
+		[Fact]
+		public void TestIncompleteRedirectShouldThrow()
+		{
+			var foo = _subject.Register(r => r.Literal("foo")
+				.Then(r.Literal("bar")
+					.Then(r.Argument("value", Integer()).Executes(c => c.GetArgument<int>("value"))))
+				.Then(r.Literal("awa").Executes(_ => 2))
+			);
+			_subject.Register(r => r.Literal("baz").Redirect(foo));
 
-    @Test
-    public void testRedirectModifierEmptyResult() throws CommandSyntaxException {
-        final LiteralCommandNode<Object> foo = subject.register(literal("foo")
-            .then(literal("bar")
-                .then(argument("value", integer()).executes(context -> IntegerArgumentType.getInteger(context, "value"))))
-            .then(literal("awa").executes(context -> 2)));
-        final RedirectModifier<Object> emptyModifier = context -> Collections.emptyList();
-        subject.register(literal("baz").fork(foo, emptyModifier));
-        int result = subject.execute("baz bar 100", source);
-        assertThat(result, is(0)); // No commands executed, so result is 0
-    }
-		 */
+			_subject.Invoking(s => s.Execute("baz bar", new object()))
+				.Should().Throw<CommandSyntaxException>()
+				.Where(ex => ex.Type == CommandSyntaxException.BuiltInExceptions.DispatcherUnknownCommand());
+		}
+
+		[Fact]
+		public void TestRedirectModifierEmptyResult()
+		{
+			var foo = _subject.Register(r => r.Literal("foo")
+				.Then(r.Literal("bar")
+					.Then(r.Argument("value", Integer()).Executes(c => c.GetArgument<int>("value"))))
+				.Then(r.Literal("awa").Executes(_ => 2))
+			);
+			RedirectModifier<object> emptyModifier = _ => Array.Empty<object>();
+			_subject.Register(r => r.Literal("baz").Fork(foo, emptyModifier));
+
+			var result = _subject.Execute("baz bar 100", new object());
+			result.Should().Be(0);
+		}
+
 		[Fact]
 		public void TestExecuteOrphanedSubCommand()
 		{
@@ -431,171 +437,154 @@ namespace Brigadier.NET.Tests
 			_subject.FindNode(new List<string> { "foo", "bar" }).Should().BeNull();
 		}
 
-		/*
+		[Fact]
+		public void TestResultConsumerInNonErrorRun()
+		{
+			_subject.Consumer = _consumer;
+			
+			_subject.Register(r => r.Literal("foo").Executes(_command));
+			_command.Invoke(Arg.Any<CommandContext<object>>()).Returns(5);
 
-    @Test
-    public void testResultConsumerInNonErrorRun() throws CommandSyntaxException {
-        subject.setConsumer(consumer);
+			_subject.Execute("foo", new object()).Should().Be(5);
+			_consumer.Received().Invoke(Arg.Any<CommandContext<object>>(), true, 5);
+			//verifyNoMoreInteractions(consumer);
+		}
 
-        subject.register(literal("foo").executes(command));
-        when(command.run(any())).thenReturn(5);
+		[Fact]
+		public void TestResultConsumerInForkedNonErrorRun()
+		{
+			_subject.Consumer = _consumer;
+			
+			_subject.Register(r => r.Literal("foo").Executes(c => (int)c.Source));
+			var contexts = new object[] { 9, 10, 11 };
 
-        assertThat(subject.execute("foo", source), is(5));
-        verify(consumer).onCommandComplete(any(), eq(true), eq(5));
-        verifyNoMoreInteractions(consumer);
-    }
+			_subject.Register(r => r.Literal("repeat").Fork(_subject.Root, _ => contexts.ToList()));
 
-    @Test
-    public void testResultConsumerInForkedNonErrorRun() throws CommandSyntaxException {
-        subject.setConsumer(consumer);
+			_subject.Execute("repeat foo", new object()).Should().Be(contexts.Length);
+			_consumer.Received().Invoke(Arg.Is<CommandContext<object>>(c => (int)c.Source == 9), true, 9);
+			_consumer.Received().Invoke(Arg.Is<CommandContext<object>>(c => (int)c.Source == 10), true, 10);
+			_consumer.Received().Invoke(Arg.Is<CommandContext<object>>(c => (int)c.Source == 11), true, 11);
+			//verifyNoMoreInteractions(consumer);
+		}
 
-        subject.register(literal("foo").executes(c -> (Integer)(c.getSource())));
-        final Object[] contexts = new Object[] {9, 10, 11};
+		[Fact]
+		public void TestExceptionInNonForkedCommand()
+		{
+			_subject.Consumer = _consumer;
+			_subject.Register(r => r.Literal("crash").Executes(_command));
 
-        subject.register(literal("repeat").fork(subject.getRoot(), context -> Arrays.asList(contexts)));
+			var exception = CommandSyntaxException.BuiltInExceptions.ReaderExpectedBool().Create();
+			_command.Invoke(Arg.Any<CommandContext<object>>()).Returns(_ => { throw exception; });
+			
 
-        assertThat(subject.execute("repeat foo", source), is(contexts.length));
-        verify(consumer).onCommandComplete(argThat(contextSourceMatches(contexts[0])), eq(true), eq(9));
-        verify(consumer).onCommandComplete(argThat(contextSourceMatches(contexts[1])), eq(true), eq(10));
-        verify(consumer).onCommandComplete(argThat(contextSourceMatches(contexts[2])), eq(true), eq(11));
-        verifyNoMoreInteractions(consumer);
-    }
+			_subject.Invoking(s => s.Execute("crash", _source))
+				.Should().Throw<CommandSyntaxException>()
+				.Where(ex => ReferenceEquals(ex, exception));
+			_consumer.Received().Invoke(Arg.Any<CommandContext<object>>(), false, 0);
+			//verifyNoMoreInteractions(consumer);
+		}
 
-    @Test
-    public void testExceptionInNonForkedCommand() throws CommandSyntaxException {
-        subject.setConsumer(consumer);
-        subject.register(literal("crash").executes(command));
-        final CommandSyntaxException exception = CommandSyntaxException.BUILT_IN_EXCEPTIONS.readerExpectedBool().create();
-        when(command.run(any())).thenThrow(exception);
+		[Fact]
+		public void TestExceptionInNonForkedRedirectedCommand()
+		{
+			var subject = new CommandDispatcher<object>();
+			var consumer = Substitute.For<ResultConsumer<object>>();
+			subject.Consumer = consumer;
+			var command = Substitute.For<Command<object>>();
+			var exception = CommandSyntaxException.BuiltInExceptions.ReaderExpectedBool().Create();
+			command.Invoke(Arg.Any<CommandContext<object>>()).Returns(_ => { throw exception; });
+			subject.Register(r => r.Literal("crash").Executes(command));
+			subject.Register(r => r.Literal("redirect").Redirect(subject.Root));
 
-        try {
-            subject.execute("crash", source);
-            fail();
-        } catch (final CommandSyntaxException ex) {
-            assertThat(ex, is(exception));
-        }
+			subject.Invoking(s => s.Execute("redirect crash", new object()))
+				.Should().Throw<CommandSyntaxException>()
+				.Where(ex => ReferenceEquals(ex, exception));
+			consumer.Received().Invoke(Arg.Any<CommandContext<object>>(), false, 0);
+		}
 
-        verify(consumer).onCommandComplete(any(), eq(false), eq(0));
-        verifyNoMoreInteractions(consumer);
-    }
+		[Fact]
+		public void TestExceptionInForkedRedirectedCommand()
+		{
+			_subject.Consumer = _consumer;
+			_subject.Register(r => r.Literal("crash").Executes(_command));
+			_subject.Register(r => r.Literal("redirect").Fork(_subject.Root, _ => new List<object> { new() }));
 
-    @Test
-    public void testExceptionInNonForkedRedirectedCommand() throws CommandSyntaxException {
-        subject.setConsumer(consumer);
-        subject.register(literal("crash").executes(command));
-        subject.register(literal("redirect").redirect(subject.getRoot()));
+			var exception = CommandSyntaxException.BuiltInExceptions.ReaderExpectedBool().Create();
+			_command.Invoke(Arg.Any<CommandContext<object>>()).Returns(_ => throw exception);
+			
 
-        final CommandSyntaxException exception = CommandSyntaxException.BUILT_IN_EXCEPTIONS.readerExpectedBool().create();
-        when(command.run(any())).thenThrow(exception);
+			_subject.Execute("redirect crash", new object()).Should().Be(0); // fork swallows exceptions
+			_consumer.Received().Invoke(Arg.Any<CommandContext<object>>(), false, 0);
+			//verifyNoMoreInteractions(_consumer);
+		}
 
-        try {
-            subject.execute("redirect crash", source);
-            fail();
-        } catch (final CommandSyntaxException ex) {
-            assertThat(ex, is(exception));
-        }
+		[Fact]
+		public void TestExceptionInNonForkedRedirect()
+		{
+			var exception = CommandSyntaxException.BuiltInExceptions.ReaderExpectedBool().Create();
 
-        verify(consumer).onCommandComplete(any(), eq(false), eq(0));
-        verifyNoMoreInteractions(consumer);
-    }
+			_subject.Consumer = _consumer;
+			_subject.Register(r => r.Literal("noop").Executes(_command));
+			_subject.Register(r => r.Literal("redirect").Redirect(_subject.Root, _ => throw exception));
+			
+			_command.Invoke(Arg.Any<CommandContext<object>>()).Returns(3);
 
-    @Test
-    public void testExceptionInForkedRedirectedCommand() throws CommandSyntaxException {
-        subject.setConsumer(consumer);
-        subject.register(literal("crash").executes(command));
-        subject.register(literal("redirect").fork(subject.getRoot(), Collections::singleton));
+			_subject.Invoking(s => s.Execute("redirect noop", new object()))
+				.Should().Throw<CommandSyntaxException>()
+				.Where(ex => ReferenceEquals(ex, exception));
+			
+			_command.DidNotReceive().Invoke(Arg.Any<CommandContext<object>>());
+			_consumer.Received().Invoke(Arg.Any<CommandContext<object>>(), false, 0);
+			//verifyNoMoreInteractions(_consumer);
+		}
 
-        final CommandSyntaxException exception = CommandSyntaxException.BUILT_IN_EXCEPTIONS.readerExpectedBool().create();
-        when(command.run(any())).thenThrow(exception);
+		[Fact]
+		public void TestExceptionInForkedRedirect()
+		{
+			var exception = CommandSyntaxException.BuiltInExceptions.ReaderExpectedBool().Create();
 
-        assertThat(subject.execute("redirect crash", source), is(0));
-        verify(consumer).onCommandComplete(any(), eq(false), eq(0));
-        verifyNoMoreInteractions(consumer);
-    }
+			_subject.Consumer = _consumer;
+			_subject.Register(r => r.Literal("noop").Executes(_command));
+			_subject.Register(r => r.Literal("redirect").Fork(_subject.Root, _ => throw exception));
+			_command.Invoke(Arg.Any<CommandContext<object>>()).Returns(3);
 
-    @Test
-    public void testExceptionInNonForkedRedirect() throws CommandSyntaxException {
-        final CommandSyntaxException exception = CommandSyntaxException.BUILT_IN_EXCEPTIONS.readerExpectedBool().create();
+			_subject.Execute("redirect noop", new object()).Should().Be(0); // fork -> 0 successes
+			_command.DidNotReceive().Invoke(Arg.Any<CommandContext<object>>());
+			_consumer.Received().Invoke(Arg.Any<CommandContext<object>>(), false, 0);
+			//verifyNoMoreInteractions(_consumer);
+		}
 
-        subject.setConsumer(consumer);
-        subject.register(literal("noop").executes(command));
-        subject.register(literal("redirect").redirect(subject.getRoot(), context -> {
-            throw exception;
-        }));
+		[Fact]
+		public void TestPartialExceptionInForkedRedirect()
+		{
+			var exception = CommandSyntaxException.BuiltInExceptions.ReaderExpectedBool().Create();
+			var otherSource = new object();
+			var rejectedSource = new object();
+			
+			_subject.Consumer = _consumer;
+			
 
-        when(command.run(any())).thenReturn(3);
+			_subject.Register(r => r.Literal("run").Executes(_command));
+			_subject.Register(r => r.Literal("split").Fork(_subject.Root, _ => new List<object> { _source, rejectedSource, otherSource }));
+			_subject.Register(r => r.Literal("filter").Fork(_subject.Root, ctx =>
+			{
+				var current = ctx.Source;
+				if (ReferenceEquals(current, rejectedSource))
+				{
+					throw exception;
+				}
+				return new List<object> { current };
+			}));
+			_command.Invoke(Arg.Any<CommandContext<object>>()).Returns(3);
 
-        try {
-            subject.execute("redirect noop", source);
-            fail();
-        } catch (final CommandSyntaxException ex) {
-            assertThat(ex, is(exception));
-        }
+			_subject.Execute("split filter run", _source).Should().Be(2);
+			_command.Received(1).Invoke(Arg.Is<CommandContext<object>>(c => ReferenceEquals(c.Source, _source)));
+			_command.Received(1).Invoke(Arg.Is<CommandContext<object>>(c => ReferenceEquals(c.Source, otherSource)));
+			_command.DidNotReceive().Invoke(Arg.Is<CommandContext<object>>(c => ReferenceEquals(c.Source, rejectedSource)));
 
-        verifyZeroInteractions(command);
-        verify(consumer).onCommandComplete(any(), eq(false), eq(0));
-        verifyNoMoreInteractions(consumer);
-    }
-
-    @Test
-    public void testExceptionInForkedRedirect() throws CommandSyntaxException {
-        final CommandSyntaxException exception = CommandSyntaxException.BUILT_IN_EXCEPTIONS.readerExpectedBool().create();
-
-        subject.setConsumer(consumer);
-        subject.register(literal("noop").executes(command));
-        subject.register(literal("redirect").fork(subject.getRoot(), context -> {
-            throw exception;
-        }));
-
-        when(command.run(any())).thenReturn(3);
-
-
-        assertThat(subject.execute("redirect noop", source), is(0));
-
-        verifyZeroInteractions(command);
-        verify(consumer).onCommandComplete(any(), eq(false), eq(0));
-        verifyNoMoreInteractions(consumer);
-    }
-
-    @Test
-    public void testPartialExceptionInForkedRedirect() throws CommandSyntaxException {
-        final CommandSyntaxException exception = CommandSyntaxException.BUILT_IN_EXCEPTIONS.readerExpectedBool().create();
-        final Object otherSource = new Object();
-        final Object rejectedSource = new Object();
-
-        subject.setConsumer(consumer);
-        subject.register(literal("run").executes(command));
-        subject.register(literal("split").fork(subject.getRoot(), context -> Arrays.asList(source, rejectedSource, otherSource)));
-        subject.register(literal("filter").fork(subject.getRoot(), context -> {
-            final Object currentSource = context.getSource();
-            if (currentSource == rejectedSource) {
-                throw exception;
-            }
-            return Collections.singleton(currentSource);
-        }));
-
-        when(command.run(any())).thenReturn(3);
-
-        assertThat(subject.execute("split filter run", source), is(2));
-
-        verify(command).run(argThat(contextSourceMatches(source)));
-        verify(command).run(argThat(contextSourceMatches(otherSource)));
-        verifyNoMoreInteractions(command);
-
-        verify(consumer).onCommandComplete(argThat(contextSourceMatches(rejectedSource)), eq(false), eq(0));
-        verify(consumer).onCommandComplete(argThat(contextSourceMatches(source)), eq(true), eq(3));
-        verify(consumer).onCommandComplete(argThat(contextSourceMatches(otherSource)), eq(true), eq(3));
-        verifyNoMoreInteractions(consumer);
-    }
-
-    public static Matcher<CommandContext<Object>> contextSourceMatches(final Object source) {
-        return new CustomMatcher<CommandContext<Object>>("source " + source) {
-            @Override
-            public boolean matches(Object object) {
-                return (object instanceof CommandContext) && ((CommandContext<?>) object).getSource() == source;
-            }
-        };
-    }
-		 */
+			_consumer.Received(1).Invoke(Arg.Is<CommandContext<object>>(c => ReferenceEquals(c.Source, rejectedSource)), false, 0);
+			_consumer.Received(1).Invoke(Arg.Is<CommandContext<object>>(c => ReferenceEquals(c.Source, _source)), true, 3);
+			_consumer.Received(1).Invoke(Arg.Is<CommandContext<object>>(c => ReferenceEquals(c.Source, otherSource)), true, 3);
+		}
 	}
 }
