@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
 	<PropertyGroup>
 		<TargetFrameworks>netstandard2.1;net6.0;net7.0;net8.0;net9.0</TargetFrameworks>
@@ -19,12 +19,17 @@
 		<PackageProjectUrl>https://github.com/AtomicBlom/Brigadier.NET</PackageProjectUrl>
 		<RepositoryUrl>https://github.com/AtomicBlom/Brigadier.NET</RepositoryUrl>
 		<PackageTags>Brigadier command line parser dispatcher</PackageTags>
+		<PackageReadmeFile>README.md</PackageReadmeFile>
 	</PropertyGroup>
 
 	<ItemGroup>
 		<Using Include="JetBrains.Annotations" />
 		<Using Include="System.Text" />
 		<Using Include="System.Diagnostics.CodeAnalysis" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<None Include="..\README.md" Pack="true" PackagePath="\"/>
 	</ItemGroup>
 
 </Project>
