@@ -38,12 +38,11 @@ public class IntegerArgumentType : IArgumentType<int>
 	public IEnumerable<string> Examples => IntegerExamples;
 
 
-	public override bool Equals(object o)
+	public override bool Equals(object? o)
 	{
 		if (this == o) return true;
-		if (!(o is IntegerArgumentType)) return false;
+		if (o is not IntegerArgumentType that) return false;
 
-		var that = (IntegerArgumentType)o;
 		return Maximum == that.Maximum && Minimum == that.Minimum;
 	}
 

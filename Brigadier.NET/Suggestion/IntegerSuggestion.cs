@@ -21,11 +21,11 @@ public class IntegerSuggestion : Suggestion, IEquatable<IntegerSuggestion>
 		       && Equals(other);
 	}
 
-	public bool Equals(IntegerSuggestion other)
+	public bool Equals(IntegerSuggestion? other)
 	{
 		if (ReferenceEquals(null, other)) return false;
 		if (ReferenceEquals(this, other)) return true;
-		return Value == other.Value 
+		return Value == other?.Value 
 		       && base.Equals(other);
 	}
 
@@ -39,7 +39,7 @@ public class IntegerSuggestion : Suggestion, IEquatable<IntegerSuggestion>
 		return $"IntegerSuggestion{{value={Value}, range={Range}, text='{Text}', tooltip='{Tooltip}'}}";
 	}
 
-	public override int CompareTo(Suggestion o)
+	public override int CompareTo(Suggestion? o)
 	{
 		if (o is IntegerSuggestion integerSuggestion)
 		{

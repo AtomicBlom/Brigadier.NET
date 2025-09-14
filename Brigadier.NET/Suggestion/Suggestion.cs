@@ -45,7 +45,7 @@ public class Suggestion : IComparable<Suggestion>, IEquatable<Suggestion>
 		       && Equals(other);
 	}
 
-	public bool Equals(Suggestion other)
+	public bool Equals(Suggestion? other)
 	{
 		if (ReferenceEquals(null, other)) return false;
 		if (ReferenceEquals(this, other)) return true;
@@ -64,9 +64,9 @@ public class Suggestion : IComparable<Suggestion>, IEquatable<Suggestion>
 		return $"Suggestion{{range={Range}, text='{Text}', tooltip='{Tooltip}}}";
 	}
 
-	public virtual int CompareTo(Suggestion o)
+	public virtual int CompareTo(Suggestion? o)
 	{
-		return String.Compare(Text, o.Text, StringComparison.Ordinal);
+		return String.Compare(Text, o?.Text, StringComparison.Ordinal);
 	}
 
 	public virtual int CompareToIgnoreCase(Suggestion b)

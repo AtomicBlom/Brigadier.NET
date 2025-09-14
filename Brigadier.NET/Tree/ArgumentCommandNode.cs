@@ -96,7 +96,7 @@ public class ArgumentCommandNode<TSource, T> : ArgumentCommandNode<TSource>, IEq
 		return obj is ArgumentCommandNode<TSource, T> other && Equals(other);
 	}
 
-	public bool Equals(ArgumentCommandNode<TSource, T> other)
+	public bool Equals(ArgumentCommandNode<TSource, T>? other)
 	{
 		if (ReferenceEquals(null, other)) return false;
 		if (ReferenceEquals(this, other)) return true;

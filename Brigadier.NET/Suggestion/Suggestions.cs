@@ -30,7 +30,7 @@ public class Suggestions : IEquatable<Suggestions>
 		       && Equals(other);
 	}
 
-	public bool Equals(Suggestions other)
+	public bool Equals(Suggestions? other)
 	{
 		if (ReferenceEquals(null, other)) return false;
 		if (ReferenceEquals(this, other)) return true;

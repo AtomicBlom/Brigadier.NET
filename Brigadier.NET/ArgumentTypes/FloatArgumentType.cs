@@ -36,12 +36,11 @@ public class FloatArgumentType : IArgumentType<float>
 
 
 	[SuppressMessage("ReSharper", "CompareOfFloatsByEqualityOperator")]
-	public override bool Equals(object o)
+	public override bool Equals(object? o)
 	{
 		if (this == o) return true;
-		if (!(o is FloatArgumentType)) return false;
+		if (o is not FloatArgumentType that) return false;
 
-		var that = (FloatArgumentType)o;
 		return Maximum == that.Maximum && Minimum == that.Minimum;
 	}
 

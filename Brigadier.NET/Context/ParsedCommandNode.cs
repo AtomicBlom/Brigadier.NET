@@ -27,7 +27,7 @@ public class ParsedCommandNode<TSource> : IEquatable<ParsedCommandNode<TSource>>
 		return obj is ParsedCommandNode<TSource> other && Equals(other);
 	}
 
-	public bool Equals(ParsedCommandNode<TSource> other)
+	public bool Equals(ParsedCommandNode<TSource>? other)
 	{
 		if (ReferenceEquals(null, other)) return false;
 		if (ReferenceEquals(this, other)) return true;

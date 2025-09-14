@@ -74,14 +74,14 @@ public class LiteralCommandNode<TSource> : CommandNode<TSource>, IEquatable<Lite
 		return Parse(new StringReader(input)) > -1;
 	}
 
-	public override bool Equals(object obj)
+	public override bool Equals(object? obj)
 	{
 		if (ReferenceEquals(null, obj)) return false;
 		if (ReferenceEquals(this, obj)) return true;
 		return obj is LiteralCommandNode<TSource> other && Equals(other);
 	}
 
-	public bool Equals(LiteralCommandNode<TSource> other)
+	public bool Equals(LiteralCommandNode<TSource>? other)
 	{
 		if (ReferenceEquals(null, other)) return false;
 		if (ReferenceEquals(this, other)) return true;

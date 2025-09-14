@@ -23,16 +23,14 @@ public struct ParsedArgument<TSource, T> : IParsedArgument, IEquatable<ParsedArg
 
 	public override bool Equals(object? obj)
 	{
-		if (ReferenceEquals(null, obj)) return false;
-		if (ReferenceEquals(this, obj)) return true;
-		return obj is ParsedArgument<TSource, T> other && Equals(other);
+		return obj is ParsedArgument<TSource, T> other 
+		       && Equals(other);
 	}
 
 	public bool Equals(ParsedArgument<TSource, T> other)
 	{
-		if (ReferenceEquals(null, other)) return false;
-		if (ReferenceEquals(this, other)) return true;
-		return Equals(Range, other.Range) && EqualityComparer<T>.Default.Equals(_result, other._result);
+		return Range.Equals(other.Range) 
+		       && EqualityComparer<T>.Default.Equals(_result, other._result);
 	}
 
 	public override int GetHashCode()

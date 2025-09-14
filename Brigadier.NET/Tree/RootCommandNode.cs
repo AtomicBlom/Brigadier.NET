@@ -30,14 +30,14 @@ public class RootCommandNode<TSource> : CommandNode<TSource>, IEquatable<RootCom
 		return false;
 	}
 
-	public override bool Equals(object obj)
+	public override bool Equals(object? obj)
 	{
 		if (ReferenceEquals(null, obj)) return false;
 		if (ReferenceEquals(this, obj)) return true;
 		return obj is RootCommandNode<TSource> other && Equals(other);
 	}
 
-	public bool Equals(RootCommandNode<TSource> other)
+	public bool Equals(RootCommandNode<TSource>? other)
 	{
 		return true;
 	}

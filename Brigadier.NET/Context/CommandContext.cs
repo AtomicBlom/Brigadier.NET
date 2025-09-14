@@ -86,14 +86,14 @@ public class CommandContext<TSource> : IEquatable<CommandContext<TSource>>
 		}
 	}
 
-	public override bool Equals(object obj)
+	public override bool Equals(object? obj)
 	{
 		if (ReferenceEquals(null, obj)) return false;
 		if (ReferenceEquals(this, obj)) return true;
 		return obj is CommandContext<TSource> other && Equals(other);
 	}
 
-	public bool Equals(CommandContext<TSource> other)
+	public bool Equals(CommandContext<TSource>? other)
 	{
 		if (ReferenceEquals(null, other)) return false;
 		if (ReferenceEquals(this, other)) return true;

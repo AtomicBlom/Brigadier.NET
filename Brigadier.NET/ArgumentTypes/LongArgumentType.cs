@@ -36,12 +36,11 @@ public class LongArgumentType : IArgumentType<long>
 	public IEnumerable<string> Examples => LongExamples;
 
 
-	public override bool Equals(object o)
+	public override bool Equals(object? o)
 	{
 		if (this == o) return true;
-		if (!(o is LongArgumentType)) return false;
+		if (o is not LongArgumentType that) return false;
 
-		var that = (LongArgumentType)o;
 		return Maximum == that.Maximum && Minimum == that.Minimum;
 	}
 

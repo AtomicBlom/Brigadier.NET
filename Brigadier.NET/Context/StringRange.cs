@@ -43,12 +43,12 @@ public readonly struct StringRange : IEquatable<StringRange>
 
 	public int Length => End - Start;
 
-	public override bool Equals(object o)
+	public override bool Equals(object? o)
 	{
-		if (!(o is StringRange)) {
+		if (o is not StringRange that) {
 			return false;
 		}
-		var that = (StringRange)o;
+
 		return Start == that.Start && End == that.End;
 	}
 

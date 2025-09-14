@@ -1,11 +1,14 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
 	<PropertyGroup>
-		<TargetFrameworks>netstandard2.1</TargetFrameworks>
-		<AssemblyName>Brigadier.NET</AssemblyName>
+		<TargetFrameworks>netstandard2.1;net6.0;net7.0;net8.0;net9.0</TargetFrameworks>
 		<Nullable>enable</Nullable>
 		<LangVersion>latest</LangVersion>
 		<ImplicitUsings>enable</ImplicitUsings>
+		<IsAotCompatible>true</IsAotCompatible>
+	</PropertyGroup>
+
+	<PropertyGroup>
 		<Authors>Steven Blom</Authors>
 		<Description>
 			Brigadier.NET is a port of Mojang's brigadier command line parser &amp; dispatcher, originally for Minecraft: Java Edition and now freely available for use elsewhere under the MIT license.

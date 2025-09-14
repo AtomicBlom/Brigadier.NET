@@ -39,7 +39,7 @@ public class DoubleArgumentType : IArgumentType<double>
 
 
 	[SuppressMessage("ReSharper", "CompareOfFloatsByEqualityOperator")]
-	public override bool Equals(object o)
+	public override bool Equals(object? o)
 	{
 		if (this == o) return true;
 		if (!(o is DoubleArgumentType)) return false;

@@ -179,10 +179,10 @@ public abstract class CommandNode<TSource> : IComparable<CommandNode<TSource>>, 
 		}
 	}
 
-	public int CompareTo(CommandNode<TSource> o)
+	public int CompareTo(CommandNode<TSource>? o)
 	{
 		if (this is LiteralCommandNode<TSource> == o is LiteralCommandNode<TSource>) {
-			return string.Compare(SortedKey, o.SortedKey, StringComparison.Ordinal);
+			return string.Compare(SortedKey, o?.SortedKey, StringComparison.Ordinal);
 		}
 
 		return (o is LiteralCommandNode<TSource>) ? 1 : -1;
