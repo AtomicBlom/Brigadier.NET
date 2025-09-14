@@ -8,60 +8,59 @@ using FluentAssertions;
 using NSubstitute;
 using Xunit;
 
-namespace Brigadier.NET.Tests.tree
-{
-	public abstract class AbstractCommandNodeTest {
-		private readonly Command<object> _command = Substitute.For<Command<object>>();
+namespace Brigadier.NET.Tests.tree;
 
-		protected abstract CommandNode<object> GetCommandNode();
+public abstract class AbstractCommandNodeTest {
+	private readonly Command<object> _command = Substitute.For<Command<object>>();
 
-		[Fact]
-		public void TestAddChild(){
-			var node = GetCommandNode();
+	protected abstract CommandNode<object> GetCommandNode();
+
+	[Fact]
+	public void TestAddChild(){
+		var node = GetCommandNode();
 
 		
 
-			node.AddChild(LiteralArgumentBuilder<object>.LiteralArgument("child1").Build());
-			node.AddChild(LiteralArgumentBuilder<object>.LiteralArgument("child2").Build());
-			node.AddChild(LiteralArgumentBuilder<object>.LiteralArgument("child1").Build());
+		node.AddChild(LiteralArgumentBuilder<object>.LiteralArgument("child1").Build());
+		node.AddChild(LiteralArgumentBuilder<object>.LiteralArgument("child2").Build());
+		node.AddChild(LiteralArgumentBuilder<object>.LiteralArgument("child1").Build());
 
-			node.Children.Should().HaveCount(2);
-		}
+		node.Children.Should().HaveCount(2);
+	}
 
-		[Fact]
-		public void TestAddChildMergesGrandchildren(){
-			var node = GetCommandNode();
+	[Fact]
+	public void TestAddChildMergesGrandchildren(){
+		var node = GetCommandNode();
 
-			node.AddChild(LiteralArgumentBuilder<object>.LiteralArgument("child")
-				.Then(r => r.Literal("grandchild1"))
-				.Build());
+		node.AddChild(LiteralArgumentBuilder<object>.LiteralArgument("child")
+			.Then(r => r.Literal("grandchild1"))
+			.Build());
 
-			node.AddChild(LiteralArgumentBuilder<object>.LiteralArgument("child")
-				.Then(r => r.Literal("grandchild2"))
-				.Build());
+		node.AddChild(LiteralArgumentBuilder<object>.LiteralArgument("child")
+			.Then(r => r.Literal("grandchild2"))
+			.Build());
 
-			node.Children.Should().HaveCount(1);
-			node.Children.First().Children.Should().HaveCount(2);
-		}
+		node.Children.Should().HaveCount(1);
+		node.Children.First().Children.Should().HaveCount(2);
+	}
 
-		[Fact]
-		public void TestAddChildPreservesCommand(){
-			var node = GetCommandNode();
+	[Fact]
+	public void TestAddChildPreservesCommand(){
+		var node = GetCommandNode();
 
-			node.AddChild(LiteralArgumentBuilder<object>.LiteralArgument("child").Executes(_command).Build());
-			node.AddChild(LiteralArgumentBuilder<object>.LiteralArgument("child").Build());
+		node.AddChild(LiteralArgumentBuilder<object>.LiteralArgument("child").Executes(_command).Build());
+		node.AddChild(LiteralArgumentBuilder<object>.LiteralArgument("child").Build());
 
-			node.Children.First().Command.Should().Be(_command);
-		}
+		node.Children.First().Command.Should().Be(_command);
+	}
 
-		[Fact]
-		public void TestAddChildOverwritesCommand(){
-			var node = GetCommandNode();
+	[Fact]
+	public void TestAddChildOverwritesCommand(){
+		var node = GetCommandNode();
 
-			node.AddChild(LiteralArgumentBuilder<object>.LiteralArgument("child").Build());
-			node.AddChild(LiteralArgumentBuilder<object>.LiteralArgument("child").Executes(_command).Build());
+		node.AddChild(LiteralArgumentBuilder<object>.LiteralArgument("child").Build());
+		node.AddChild(LiteralArgumentBuilder<object>.LiteralArgument("child").Executes(_command).Build());
 
-			node.Children.First().Command.Should().Be(_command);
-		}
+		node.Children.First().Command.Should().Be(_command);
 	}
 }

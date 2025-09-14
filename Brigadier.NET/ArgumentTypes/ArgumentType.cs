@@ -2,24 +2,23 @@
 using Brigadier.NET.Exceptions;
 using Brigadier.NET.Suggestion;
 
-namespace Brigadier.NET.ArgumentTypes
+namespace Brigadier.NET.ArgumentTypes;
+
+[PublicAPI]
+public interface IArgumentType<out T> 
 {
-	[PublicAPI]
-	public interface IArgumentType<out T> 
+	/// <exception cref="CommandSyntaxException"></exception>
+	T Parse(IStringReader reader);
+
+	T Parse<TSource>(StringReader reader, TSource source)
 	{
-		/// <exception cref="CommandSyntaxException"></exception>
-		T Parse(IStringReader reader);
-
-		T Parse<TSource>(StringReader reader, TSource source)
-		{
-			return Parse(reader);
-		}
-
-		Task<Suggestions> ListSuggestions<TSource>(CommandContext<TSource> context, SuggestionsBuilder builder)
-		{
-			return Suggestions.Empty();
-		}
-
-		IEnumerable<string> Examples => [];
+		return Parse(reader);
 	}
+
+	Task<Suggestions> ListSuggestions<TSource>(CommandContext<TSource> context, SuggestionsBuilder builder)
+	{
+		return Suggestions.Empty();
+	}
+
+	IEnumerable<string> Examples => [];
 }

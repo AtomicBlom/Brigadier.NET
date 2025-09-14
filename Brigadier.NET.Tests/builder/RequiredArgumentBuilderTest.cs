@@ -7,42 +7,41 @@ using FluentAssertions;
 using NSubstitute;
 using Xunit;
 
-namespace Brigadier.NET.Tests.builder
-{
-	public class RequiredArgumentBuilderTest {
-		private readonly IArgumentType<int> _type = Substitute.For<IArgumentType<int>>();
-		private readonly RequiredArgumentBuilder<object, int> _builder;
-		private readonly Command<object> _command = Substitute.For<Command<object>>();
+namespace Brigadier.NET.Tests.builder;
 
-		public RequiredArgumentBuilderTest()
-		{
-			_builder = RequiredArgumentBuilder<object, int>.RequiredArgument("foo", _type);
-		}
+public class RequiredArgumentBuilderTest {
+	private readonly IArgumentType<int> _type = Substitute.For<IArgumentType<int>>();
+	private readonly RequiredArgumentBuilder<object, int> _builder;
+	private readonly Command<object> _command = Substitute.For<Command<object>>();
 
-		[Fact]
-		public void TestBuild(){
-			var node = _builder.Build();
+	public RequiredArgumentBuilderTest()
+	{
+		_builder = RequiredArgumentBuilder<object, int>.RequiredArgument("foo", _type);
+	}
 
-			node.Name.Should().Be("foo");
-			node.Type.Should().Be(_type);
-		}
+	[Fact]
+	public void TestBuild(){
+		var node = _builder.Build();
 
-		[Fact]
-		public void TestBuildWithExecutor(){
-			var node = _builder.Executes(_command).Build();
+		node.Name.Should().Be("foo");
+		node.Type.Should().Be(_type);
+	}
 
-			node.Name.Should().Be("foo");
-			node.Type.Should().Be(_type);
-			node.Command.Should().Be(_command);
-		}
+	[Fact]
+	public void TestBuildWithExecutor(){
+		var node = _builder.Executes(_command).Build();
 
-		[Fact]
-		public void TestBuildWithChildren(){
-			_builder.Then(r => r.Argument("bar", Arguments.Integer()));
-			_builder.Then(r => r.Argument("baz", Arguments.Integer()));
-			var node = _builder.Build();
+		node.Name.Should().Be("foo");
+		node.Type.Should().Be(_type);
+		node.Command.Should().Be(_command);
+	}
 
-			node.Children.Should().HaveCount(2);
-		}
+	[Fact]
+	public void TestBuildWithChildren(){
+		_builder.Then(r => r.Argument("bar", Arguments.Integer()));
+		_builder.Then(r => r.Argument("baz", Arguments.Integer()));
+		var node = _builder.Build();
+
+		node.Children.Should().HaveCount(2);
 	}
 }

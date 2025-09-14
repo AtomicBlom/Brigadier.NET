@@ -1,6 +1,5 @@
-﻿namespace Brigadier.NET.Exceptions
+﻿namespace Brigadier.NET.Exceptions;
+
+public interface ICommandExceptionType
 {
-	public interface ICommandExceptionType
-	{
-	}
 }

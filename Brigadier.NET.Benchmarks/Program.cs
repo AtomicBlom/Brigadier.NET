@@ -1,12 +1,11 @@
 ﻿using BenchmarkDotNet.Running;
 
-namespace Brigadier.NET.Benchmarks
+namespace Brigadier.NET.Benchmarks;
+
+class Program
 {
-	class Program
+	static void Main(string[] args)
 	{
-		static void Main(string[] args)
-		{
-			BenchmarkSwitcher.FromAssembly(typeof(Program).Assembly).Run(args);
-		}
+		BenchmarkSwitcher.FromAssembly(typeof(Program).Assembly).Run(args);
 	}
 }

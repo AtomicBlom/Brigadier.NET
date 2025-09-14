@@ -1,71 +1,70 @@
 ﻿using Brigadier.NET.Exceptions;
 
-namespace Brigadier.NET.ArgumentTypes
+namespace Brigadier.NET.ArgumentTypes;
+
+[PublicAPI]
+public class IntegerArgumentType : IArgumentType<int>
 {
-	[PublicAPI]
-	public class IntegerArgumentType : IArgumentType<int>
+	private static readonly IEnumerable<string> IntegerExamples = ["0", "123", "-123"];
+
+	internal IntegerArgumentType(int minimum, int maximum)
 	{
-		private static readonly IEnumerable<string> IntegerExamples = ["0", "123", "-123"];
+		Minimum = minimum;
+		Maximum = maximum;
+	}
 
-		internal IntegerArgumentType(int minimum, int maximum)
+	public int Minimum { get; }
+
+	public int Maximum { get; }
+
+	///<exception cref="CommandSyntaxException" />
+	public int Parse(IStringReader reader)
+	{
+		var start = reader.Cursor;
+		var result = reader.ReadInt();
+		if (result < Minimum)
 		{
-			Minimum = minimum;
-			Maximum = maximum;
+			reader.Cursor = start;
+			throw CommandSyntaxException.BuiltInExceptions.IntegerTooLow().CreateWithContext(reader, result, Minimum);
 		}
-
-		public int Minimum { get; }
-
-		public int Maximum { get; }
-
-		///<exception cref="CommandSyntaxException" />
-		public int Parse(IStringReader reader)
+		if (result > Maximum)
 		{
-			var start = reader.Cursor;
-			var result = reader.ReadInt();
-	        if (result < Minimum)
-	        {
-				reader.Cursor = start;
-				throw CommandSyntaxException.BuiltInExceptions.IntegerTooLow().CreateWithContext(reader, result, Minimum);
-			}
-	        if (result > Maximum)
-	        {
-		        reader.Cursor = start;
-				throw CommandSyntaxException.BuiltInExceptions.IntegerTooHigh().CreateWithContext(reader, result, Maximum);
-			}
-	        return result;
+			reader.Cursor = start;
+			throw CommandSyntaxException.BuiltInExceptions.IntegerTooHigh().CreateWithContext(reader, result, Maximum);
 		}
+		return result;
+	}
 
-		public IEnumerable<string> Examples => IntegerExamples;
+	public IEnumerable<string> Examples => IntegerExamples;
 
 
-		public override bool Equals(object o)
+	public override bool Equals(object o)
+	{
+		if (this == o) return true;
+		if (!(o is IntegerArgumentType)) return false;
+
+		var that = (IntegerArgumentType)o;
+		return Maximum == that.Maximum && Minimum == that.Minimum;
+	}
+
+	public override int GetHashCode()
+	{
+		return 31 * Minimum + Maximum;
+	}
+
+	public override string ToString()
+	{
+		if (Minimum == int.MinValue && Maximum == int.MaxValue)
 		{
-			if (this == o) return true;
-			if (!(o is IntegerArgumentType)) return false;
-
-			var that = (IntegerArgumentType)o;
-			return Maximum == that.Maximum && Minimum == that.Minimum;
+			return "integer()";
 		}
-
-		public override int GetHashCode()
+		else if (Maximum == int.MaxValue)
 		{
-			return 31 * Minimum + Maximum;
+			return "integer(" + Minimum + ")";
 		}
-
-		public override string ToString()
+		else
 		{
-			if (Minimum == int.MinValue && Maximum == int.MaxValue)
-			{
-				return "integer()";
-			}
-			else if (Maximum == int.MaxValue)
-			{
-				return "integer(" + Minimum + ")";
-			}
-			else
-			{
-				return "integer(" + Minimum + ", " + Maximum + ")";
-			}
+			return "integer(" + Minimum + ", " + Maximum + ")";
 		}
 	}
 }
