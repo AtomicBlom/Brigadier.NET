@@ -33,7 +33,7 @@ public class SuggestionsBuilder
 		return Suggestions.Create(Input, _result.ToArray());
 	}
 
-	public Task<Suggestions> BuildFuture()
+	public Task<Suggestions> BuildAsync()
 	{
 		return Task.FromResult(Build());
 	}

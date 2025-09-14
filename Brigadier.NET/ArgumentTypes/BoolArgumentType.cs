@@ -27,7 +27,7 @@ public class BoolArgumentType : IArgumentType<bool>
 		{
 			builder.Suggest("false");
 		}
-		return builder.BuildFuture();
+		return builder.BuildAsync();
 	}
 
 	public IEnumerable<string> Examples => BoolExamples;

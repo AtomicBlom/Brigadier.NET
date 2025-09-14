@@ -31,6 +31,6 @@ public class EnumArgumentType<T> : IArgumentType<T> where T : struct, Enum
 			}
 		}
 
-		return builder.BuildFuture();
+		return builder.BuildAsync();
 	}
 }

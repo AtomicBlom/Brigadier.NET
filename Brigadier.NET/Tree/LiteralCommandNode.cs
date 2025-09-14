@@ -61,7 +61,7 @@ public class LiteralCommandNode<TSource> : CommandNode<TSource>, IEquatable<Lite
 	{
 		if (Literal.ToLower().StartsWith(builder.RemainingLowerCase))
 		{
-			return builder.Suggest(Literal).BuildFuture();
+			return builder.Suggest(Literal).BuildAsync();
 		}
 		else
 		{
