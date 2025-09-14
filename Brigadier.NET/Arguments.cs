@@ -36,6 +36,16 @@ public class Arguments
 		return context.GetArgument<double>(name);
 	}
 
+	public static EnumArgumentType<TEnum> Enum<TEnum>() where TEnum : struct, Enum
+	{
+		return new EnumArgumentType<TEnum>();
+	}
+
+	public static TEnum GetEnum<TSource, TEnum>(CommandContext<TSource> context, string name)
+	{
+		return context.GetArgument<TEnum>(name);
+	}
+
 	public static FloatArgumentType Float(float min = -Single.MaxValue, float max = Single.MaxValue)
 	{
 		return new FloatArgumentType(min, max);

@@ -1,0 +1,15 @@
+<Solution>
+  <Folder Name="/CI/">
+    <File Path=".ci/azure-pipelines-build.yml" />
+    <File Path=".ci/azure-pipelines.yml" />
+    <File Path=".ci/verify-version-updated.ps1" />
+  </Folder>
+  <Folder Name="/Solution Items/">
+    <File Path="LICENSE" />
+    <File Path="README.md" />
+  </Folder>
+  <Project Path="Brigadier.NET.Benchmarks/Brigadier.NET.Benchmarks.csproj" />
+  <Project Path="Brigadier.NET.Tests/Brigadier.NET.Tests.csproj" />
+  <Project Path="Brigadier.NET.VerifyNativeAOT/Brigadier.NET.VerifyNativeAOT.csproj" />
+  <Project Path="Brigadier.NET/Brigadier.NET.csproj" />
+</Solution>

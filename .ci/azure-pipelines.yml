@@ -2,8 +2,8 @@ name: $(Build.DefinitionName)-$(date:yyyyMMdd)$(rev:.r)
 
 variables:
   buildConfiguration: 'Release'
-  majorVersion: 1
-  minorVersion: 2
+  majorVersion: 2
+  minorVersion: 0
 
 jobs:
 - template: azure-pipelines-build.yml
