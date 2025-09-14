@@ -227,15 +227,16 @@ public class StringReader : IStringReader
 
 	private string ReadStringUntil(char terminator)
 	{
-		int start = Cursor;
-		bool escaped = false;
+		var result = new StringBuilder();
+		var escaped = false;
 		while (CanRead())
 		{
-			char c = Next();
+			var c = Next();
 			if (escaped)
 			{
 				if (c == terminator || c == SyntaxEscape)
 				{
+					result.Append(c);
 					escaped = false;
 				}
 				else
@@ -250,10 +251,14 @@ public class StringReader : IStringReader
 			}
 			else if (c == terminator)
 			{
-				// Return the substring between start and the character before the terminator
-				return String.Substring(start, Cursor - start - 1);
+				return result.ToString();
+			}
+			else
+			{
+				result.Append(c);
 			}
 		}
+
 		throw CommandSyntaxException.BuiltInExceptions.ReaderExpectedEndOfQuote().CreateWithContext(this);
 	}
 
