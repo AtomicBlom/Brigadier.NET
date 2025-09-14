@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using Brigadier.NET.Exceptions;
+﻿using Brigadier.NET.Exceptions;
 
 namespace Brigadier.NET.ArgumentTypes
 {

@@ -1,5 +1,4 @@
-﻿using System.Threading.Tasks;
-using Brigadier.NET.Context;
+﻿using Brigadier.NET.Context;
 
 namespace Brigadier.NET.Suggestion
 {

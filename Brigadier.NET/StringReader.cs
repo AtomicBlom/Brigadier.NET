@@ -1,6 +1,4 @@
-using System;
 using System.Globalization;
-using System.Text;
 using Brigadier.NET.Exceptions;
 
 namespace Brigadier.NET

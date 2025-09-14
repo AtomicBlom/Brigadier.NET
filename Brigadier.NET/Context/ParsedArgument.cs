@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-
-namespace Brigadier.NET.Context
+﻿namespace Brigadier.NET.Context
 {
 
 	[PublicAPI]

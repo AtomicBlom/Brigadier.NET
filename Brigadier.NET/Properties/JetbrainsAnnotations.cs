@@ -22,8 +22,6 @@ SOFTWARE. */
 
 #nullable disable
 
-using System;
-using System.Diagnostics;
 #pragma warning disable 1591
 // ReSharper disable UnusedType.Global
 // ReSharper disable UnusedMember.Global

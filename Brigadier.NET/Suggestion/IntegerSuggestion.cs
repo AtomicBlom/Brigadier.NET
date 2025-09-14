@@ -1,5 +1,4 @@
-﻿using System;
-using Brigadier.NET.Context;
+﻿using Brigadier.NET.Context;
 
 namespace Brigadier.NET.Suggestion
 {
@@ -14,7 +13,7 @@ namespace Brigadier.NET.Suggestion
 
 		public int Value { get; }
 
-		public override bool Equals(object obj)
+		public override bool Equals(object? obj)
 		{
 			if (ReferenceEquals(null, obj)) return false;
 			if (ReferenceEquals(this, obj)) return true;

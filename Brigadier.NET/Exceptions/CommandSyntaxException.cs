@@ -1,7 +1,4 @@
-﻿using System;
-using System.Text;
-
-namespace Brigadier.NET.Exceptions
+﻿namespace Brigadier.NET.Exceptions
 {
 	[PublicAPI]
 	public class CommandSyntaxException : Exception

@@ -1,5 +1,4 @@
-﻿using System;
-using Brigadier.NET.ArgumentTypes;
+﻿using Brigadier.NET.ArgumentTypes;
 using Brigadier.NET.Context;
 
 namespace Brigadier.NET

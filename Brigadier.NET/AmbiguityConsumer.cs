@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using Brigadier.NET.Tree;
+﻿using Brigadier.NET.Tree;
 
 namespace Brigadier.NET
 {

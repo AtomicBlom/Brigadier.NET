@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using Brigadier.NET.Context;
+﻿using Brigadier.NET.Context;
 
 namespace Brigadier.NET
 {

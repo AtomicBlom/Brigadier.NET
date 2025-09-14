@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace Brigadier.NET.Context
+﻿namespace Brigadier.NET.Context
 {
 	[PublicAPI]
 	public readonly struct StringRange : IEquatable<StringRange>
