@@ -4,6 +4,7 @@ using Brigadier.NET.Context;
 
 namespace Brigadier.NET.Suggestion
 {
+	[PublicAPI]
 	public class SuggestionsBuilder
 	{
 		private readonly List<Suggestion> _result = [];

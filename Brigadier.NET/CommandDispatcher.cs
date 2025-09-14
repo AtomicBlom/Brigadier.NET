@@ -8,9 +8,11 @@ using Brigadier.NET.Context;
 using Brigadier.NET.Exceptions;
 using Brigadier.NET.Suggestion;
 using Brigadier.NET.Tree;
+using JetBrains.Annotations;
 
 namespace Brigadier.NET
 {
+	[PublicAPI]
 	public class CommandDispatcher<TSource>
 	{
 		/// <summary>

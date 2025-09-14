@@ -3,7 +3,8 @@ using Brigadier.NET.Exceptions;
 
 namespace Brigadier.NET.ArgumentTypes
 {
-	public class IntegerArgumentType : ArgumentType<int>
+	[PublicAPI]
+	public class IntegerArgumentType : IArgumentType<int>
 	{
 		private static readonly IEnumerable<string> IntegerExamples = ["0", "123", "-123"];
 

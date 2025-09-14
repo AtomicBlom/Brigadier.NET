@@ -4,6 +4,7 @@ using Brigadier.NET.Context;
 
 namespace Brigadier.NET.Suggestion
 {
+	[PublicAPI]
 	public class Suggestion : IComparable<Suggestion>, IEquatable<Suggestion>
 	{
 		public Suggestion(StringRange range, string text, IMessage? tooltip = null)
@@ -38,7 +39,7 @@ namespace Brigadier.NET.Suggestion
 			return result.ToString();
 		}
 
-		public override bool Equals(object obj)
+		public override bool Equals(object? obj)
 		{
 			if (ReferenceEquals(null, obj)) return false;
 			if (ReferenceEquals(this, obj)) return true;

@@ -5,6 +5,7 @@ using Brigadier.NET.Tree;
 
 namespace Brigadier.NET.Context
 {
+	[PublicAPI]
 	public class CommandContext<TSource> : IEquatable<CommandContext<TSource>>
 	{
 		private readonly IDictionary<string, IParsedArgument> _arguments;

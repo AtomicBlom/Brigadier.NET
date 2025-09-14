@@ -1,5 +1,6 @@
 ﻿namespace Brigadier.NET.Exceptions
 {
+	[PublicAPI]
 	public class SimpleCommandExceptionType : ICommandExceptionType
 	{
 		private readonly IMessage _message;

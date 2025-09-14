@@ -3,6 +3,7 @@ using Brigadier.NET.Tree;
 
 namespace Brigadier.NET.Context
 {
+	[PublicAPI]
 	public class ParsedCommandNode<TSource> : IEquatable<ParsedCommandNode<TSource>>
 	{
 		public ParsedCommandNode(CommandNode<TSource> node, StringRange range)
@@ -20,7 +21,7 @@ namespace Brigadier.NET.Context
 			return $"{Node}@{Range}";
 		}
 
-		public override bool Equals(object obj)
+		public override bool Equals(object? obj)
 		{
 			if (ReferenceEquals(null, obj)) return false;
 			if (ReferenceEquals(this, obj)) return true;

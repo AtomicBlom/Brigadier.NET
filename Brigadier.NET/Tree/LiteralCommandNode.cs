@@ -8,6 +8,7 @@ using Brigadier.NET.Suggestion;
 
 namespace Brigadier.NET.Tree
 {
+	[PublicAPI]
 	public class LiteralCommandNode<TSource> : CommandNode<TSource>, IEquatable<LiteralCommandNode<TSource>>
 	{
 		public LiteralCommandNode(string literal, Command<TSource>? command, Predicate<TSource> requirement, CommandNode<TSource>? redirect, RedirectModifier<TSource>? modifier, bool forks)

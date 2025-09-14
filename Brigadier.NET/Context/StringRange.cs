@@ -2,7 +2,8 @@
 
 namespace Brigadier.NET.Context
 {
-	public struct StringRange
+	[PublicAPI]
+	public readonly struct StringRange : IEquatable<StringRange>
 	{
 		public StringRange(int start, int end)
 		{
@@ -61,6 +62,11 @@ namespace Brigadier.NET.Context
 		public override string ToString()
 		{
 			return $"StringRange{{start={Start}, end={End}}}";
+		}
+
+		public bool Equals(StringRange other)
+		{
+			return Start == other.Start && End == other.End;
 		}
 	}
 }

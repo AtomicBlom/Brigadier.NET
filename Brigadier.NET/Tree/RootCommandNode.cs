@@ -7,6 +7,7 @@ using Brigadier.NET.Suggestion;
 
 namespace Brigadier.NET.Tree
 {
+	[PublicAPI]
 	public class RootCommandNode<TSource> : CommandNode<TSource>, IEquatable<RootCommandNode<TSource>>
 	{
 		public RootCommandNode() : base(null, (c) => true, null, s => [s.Source], false)

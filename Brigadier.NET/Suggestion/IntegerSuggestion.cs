@@ -3,6 +3,7 @@ using Brigadier.NET.Context;
 
 namespace Brigadier.NET.Suggestion
 {
+	[PublicAPI]
 	public class IntegerSuggestion : Suggestion, IEquatable<IntegerSuggestion>
 	{
 		public IntegerSuggestion(StringRange range, int value, IMessage? tooltip = null)

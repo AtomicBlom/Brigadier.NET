@@ -4,7 +4,8 @@ using Brigadier.NET.Exceptions;
 
 namespace Brigadier.NET.ArgumentTypes
 {
-	public class FloatArgumentType : ArgumentType<float>
+	[PublicAPI]
+	public class FloatArgumentType : IArgumentType<float>
 	{
 		private static readonly IEnumerable<string> FloatExamples = ["0", "1.2", ".5", "-1", "-.5", "-1234.56"];
 

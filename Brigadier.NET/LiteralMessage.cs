@@ -1,5 +1,6 @@
 ﻿namespace Brigadier.NET
 {
+	[PublicAPI]
 	public class LiteralMessage : IMessage
 	{
 		public LiteralMessage(string message)

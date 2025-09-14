@@ -5,6 +5,7 @@ using Brigadier.NET.Tree;
 
 namespace Brigadier.NET
 {
+	[PublicAPI]
 	public class ParseResults<TSource>
 	{
 		public ParseResults(CommandContextBuilder<TSource> context, IImmutableStringReader reader, IDictionary<CommandNode<TSource>, CommandSyntaxException> exceptions)

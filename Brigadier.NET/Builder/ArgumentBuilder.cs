@@ -4,12 +4,14 @@ using Brigadier.NET.Tree;
 
 namespace Brigadier.NET.Builder
 {
+	[PublicAPI]
 	public interface IArgumentBuilder<TSource, out TNode>
 		where TNode : CommandNode<TSource>
 	{
 		TNode Build();
 	}
 
+	[PublicAPI]
 	public abstract class ArgumentBuilder<TSource, TThis, TNode> : IArgumentBuilder<TSource, TNode> 
 		where TThis : ArgumentBuilder<TSource, TThis, TNode> 
 		where TNode : CommandNode<TSource>

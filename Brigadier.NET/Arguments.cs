@@ -4,6 +4,7 @@ using Brigadier.NET.Context;
 
 namespace Brigadier.NET
 {
+	[PublicAPI]
 	public class Arguments
 	{
 		public static IntegerArgumentType Integer(int min = Int32.MinValue, int max = Int32.MaxValue)

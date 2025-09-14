@@ -5,6 +5,7 @@ using Brigadier.NET.Exceptions;
 
 namespace Brigadier.NET.Context
 {
+	[PublicAPI]
 	public static class ContextChain
 	{
 		public static bool TryFlatten<TSource>(this CommandContext<TSource> rootContext, [NotNullWhen(true)] out ContextChain<TSource>? chain)
@@ -23,6 +24,7 @@ namespace Brigadier.NET.Context
 		}
 	}
 
+	[PublicAPI]
 	public class ContextChain<TSource>
 	{
 		// Ideally modifiers & executable could be separated by type, but both delegates expect full context

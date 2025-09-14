@@ -4,27 +4,29 @@ using Brigadier.NET.Tree;
 
 namespace Brigadier.NET.Builder
 {
+	[PublicAPI]
 	public static class RequiredArgumentBuilderExtensions
 	{
 		// ReSharper disable once UnusedParameter.Global
 		// context is used to infer generic parameters in API
-		public static RequiredArgumentBuilder<TSource, T> Argument<TSource, T>(this IArgumentContext<TSource> context, string name, ArgumentType<T> type) where T : notnull
+		public static RequiredArgumentBuilder<TSource, T> Argument<TSource, T>(this IArgumentContext<TSource> context, string name, IArgumentType<T> type) where T : notnull
 		{
 			return RequiredArgumentBuilder<TSource, T>.RequiredArgument(name, type);
 		}
 	}
 
+	[PublicAPI]
 	public class RequiredArgumentBuilder<TSource, T> : ArgumentBuilder<TSource, RequiredArgumentBuilder<TSource, T>, ArgumentCommandNode<TSource, T>> where T : notnull
 	{
 		private SuggestionProvider<TSource>? _suggestionsProvider;
 
-		private RequiredArgumentBuilder(string name, ArgumentType<T> type)
+		private RequiredArgumentBuilder(string name, IArgumentType<T> type)
 		{
 			Name = name;
 			Type = type;
 		}
 
-		public static RequiredArgumentBuilder<TSource, T> RequiredArgument(string name, ArgumentType<T> type)
+		public static RequiredArgumentBuilder<TSource, T> RequiredArgument(string name, IArgumentType<T> type)
 		{
 			return new RequiredArgumentBuilder<TSource, T>(name, type);
 		}
@@ -35,7 +37,7 @@ namespace Brigadier.NET.Builder
 			return This;
 		}
 
-		public ArgumentType<T> Type { get; }
+		public IArgumentType<T> Type { get; }
 
 		public string Name { get; }
 

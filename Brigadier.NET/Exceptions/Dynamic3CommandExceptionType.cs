@@ -1,5 +1,6 @@
 ﻿namespace Brigadier.NET.Exceptions
 {
+	[PublicAPI]
 	public class Dynamic3CommandExceptionType : ICommandExceptionType
 	{
 		private readonly Function _function;

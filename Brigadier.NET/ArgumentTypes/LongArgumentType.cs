@@ -3,7 +3,8 @@ using Brigadier.NET.Exceptions;
 
 namespace Brigadier.NET.ArgumentTypes
 {
-	public class LongArgumentType : ArgumentType<long>
+	[PublicAPI]
+	public class LongArgumentType : IArgumentType<long>
 	{
 		private static readonly IEnumerable<string> LongExamples = ["0", "123", "-123"];
 

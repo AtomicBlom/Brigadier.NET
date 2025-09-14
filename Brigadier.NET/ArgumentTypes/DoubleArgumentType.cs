@@ -4,7 +4,8 @@ using Brigadier.NET.Exceptions;
 
 namespace Brigadier.NET.ArgumentTypes
 {
-	public class DoubleArgumentType : ArgumentType<double>
+	[PublicAPI]
+	public class DoubleArgumentType : IArgumentType<double>
 	{
 		private static readonly IEnumerable<string> DoubleExamples = ["0", "1.2", ".5", "-1", "-.5", "-1234.56"];
 

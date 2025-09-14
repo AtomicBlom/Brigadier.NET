@@ -6,6 +6,7 @@ using Brigadier.NET.Context;
 
 namespace Brigadier.NET.Suggestion
 {
+	[PublicAPI]
 	public class Suggestions : IEquatable<Suggestions>
 	{
 		private static readonly Suggestions NoSuggestions = new Suggestions(StringRange.At(0), []);
@@ -25,7 +26,7 @@ namespace Brigadier.NET.Suggestion
 			return List.Count == 0;
 		}
 
-		public override bool Equals(object obj)
+		public override bool Equals(object? obj)
 		{
 			if (ReferenceEquals(null, obj)) return false;
 			if (ReferenceEquals(this, obj)) return true;

@@ -6,7 +6,8 @@ using Brigadier.NET.Suggestion;
 
 namespace Brigadier.NET.ArgumentTypes
 {
-	public interface ArgumentType<out T> 
+	[PublicAPI]
+	public interface IArgumentType<out T> 
 	{
 		/// <exception cref="CommandSyntaxException"></exception>
 		T Parse(IStringReader reader);

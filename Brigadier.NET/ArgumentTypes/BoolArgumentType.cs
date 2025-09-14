@@ -5,7 +5,8 @@ using Brigadier.NET.Suggestion;
 
 namespace Brigadier.NET.ArgumentTypes
 {
-	public class BoolArgumentType : ArgumentType<bool>
+	[PublicAPI]
+	public class BoolArgumentType : IArgumentType<bool>
 	{
 		private static readonly IEnumerable<string> BoolExamples = ["true", "false"];
 

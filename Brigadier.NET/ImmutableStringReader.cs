@@ -1,5 +1,6 @@
 ﻿namespace Brigadier.NET
 {
+	[PublicAPI]
 	public interface IImmutableStringReader
 	{
 		string String { get; }

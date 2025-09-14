@@ -3,6 +3,7 @@ using System.Text;
 
 namespace Brigadier.NET.Exceptions
 {
+	[PublicAPI]
 	public class CommandSyntaxException : Exception
 	{
 		public static readonly int ContextAmount = 10;

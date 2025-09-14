@@ -2,6 +2,7 @@
 
 namespace Brigadier.NET.Context
 {
+	[PublicAPI]
 	public class SuggestionContext<TSource>
 	{
 		public readonly CommandNode<TSource> Parent;

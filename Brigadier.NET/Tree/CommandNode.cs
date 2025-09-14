@@ -9,6 +9,7 @@ using Brigadier.NET.Suggestion;
 
 namespace Brigadier.NET.Tree
 {
+	[PublicAPI]
 	public abstract class CommandNode<TSource> : IComparable<CommandNode<TSource>>, IEnumerable<CommandNode<TSource>>
 	{
 		private readonly IDictionary<string, CommandNode<TSource>> _children = new Dictionary<string, CommandNode<TSource>>();

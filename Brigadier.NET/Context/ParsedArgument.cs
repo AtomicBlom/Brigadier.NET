@@ -4,11 +4,13 @@ using System.Collections.Generic;
 namespace Brigadier.NET.Context
 {
 
+	[PublicAPI]
 	public interface IParsedArgument
 	{
 		object Result { get; }
 	}
 
+	[PublicAPI]
 	public struct ParsedArgument<TSource, T> : IParsedArgument, IEquatable<ParsedArgument<TSource, T>> where T : notnull
 	{
 		private readonly T _result;

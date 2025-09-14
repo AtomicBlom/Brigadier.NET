@@ -5,7 +5,8 @@ using Brigadier.NET.Exceptions;
 
 namespace Brigadier.NET
 {
-    public class StringReader : IStringReader
+	[PublicAPI]
+	public class StringReader : IStringReader
     {
         private static readonly char SyntaxEscape = '\\';
         private static readonly char SyntaxDoubleQuote = '"';

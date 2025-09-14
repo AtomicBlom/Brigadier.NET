@@ -9,6 +9,7 @@ using Brigadier.NET.Suggestion;
 
 namespace Brigadier.NET.Tree
 {
+	[PublicAPI]
 	public abstract class ArgumentCommandNode<TSource> : CommandNode<TSource> {
 		protected ArgumentCommandNode(Command<TSource>? command, Predicate<TSource> requirement, CommandNode<TSource>? redirect, RedirectModifier<TSource>? modifier, bool forks) 
 			: base(command, requirement, redirect, modifier, forks)
@@ -16,6 +17,7 @@ namespace Brigadier.NET.Tree
 		}
 	}
 
+	[PublicAPI]
 	public class ArgumentCommandNode<TSource, T> : ArgumentCommandNode<TSource>, IEquatable<ArgumentCommandNode<TSource, T>> where T : notnull
 	{
 		private const string UsageArgumentOpen = "<";
@@ -23,7 +25,7 @@ namespace Brigadier.NET.Tree
 
 		private readonly string _name;
 
-		public ArgumentCommandNode(string name, ArgumentType<T> type, Command<TSource>? command, Predicate<TSource> requirement, CommandNode<TSource>? redirect, RedirectModifier<TSource>? modifier, bool forks, SuggestionProvider<TSource>? customSuggestions) :
+		public ArgumentCommandNode(string name, IArgumentType<T> type, Command<TSource>? command, Predicate<TSource> requirement, CommandNode<TSource>? redirect, RedirectModifier<TSource>? modifier, bool forks, SuggestionProvider<TSource>? customSuggestions) :
 			base(command, requirement, redirect, modifier, forks)
 		{
 			_name = name;
@@ -31,7 +33,7 @@ namespace Brigadier.NET.Tree
 			CustomSuggestions = customSuggestions;
 		}
 
-		public ArgumentType<T> Type { get; }
+		public IArgumentType<T> Type { get; }
 
 		public override string Name => _name;
 
@@ -90,7 +92,7 @@ namespace Brigadier.NET.Tree
 			}
 		}
 
-		public override bool Equals(object obj)
+		public override bool Equals(object? obj)
 		{
 			if (ReferenceEquals(null, obj)) return false;
 			if (ReferenceEquals(this, obj)) return true;

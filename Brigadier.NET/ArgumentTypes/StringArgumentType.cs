@@ -4,7 +4,8 @@ using Brigadier.NET.Exceptions;
 
 namespace Brigadier.NET.ArgumentTypes
 {
-	public class StringArgumentType : ArgumentType<string> {
+	[PublicAPI]
+	public class StringArgumentType : IArgumentType<string> {
 		internal StringArgumentType(StringArgType type)
 		{
 			Type = type;

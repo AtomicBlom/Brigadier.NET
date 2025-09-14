@@ -10,7 +10,7 @@ using Xunit;
 namespace Brigadier.NET.Tests.builder
 {
 	public class RequiredArgumentBuilderTest {
-		private readonly ArgumentType<int> _type = Substitute.For<ArgumentType<int>>();
+		private readonly IArgumentType<int> _type = Substitute.For<IArgumentType<int>>();
 		private readonly RequiredArgumentBuilder<object, int> _builder;
 		private readonly Command<object> _command = Substitute.For<Command<object>>();
 

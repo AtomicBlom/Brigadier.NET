@@ -1,5 +1,6 @@
 ﻿namespace Brigadier.NET
 {
+	[PublicAPI]
 	public interface IStringReader : IImmutableStringReader
 	{
 		//I hate this, but .net doesn't allow you to add a setter to a property defined in an interface with only a getter.
