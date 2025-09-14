@@ -46,6 +46,12 @@ jobs:
       displayName: Dump Variables
       condition: eq(variables['system.debug'], 'true')
 
+    - task: UseDotNet@2
+      inputs:
+        #Current version was written with .net 10 rc 1
+        version: '10.x'
+        includePreviewVersions: true
+
     - script: dotnet build --configuration $(buildConfiguration)
       displayName: 'Compile $(buildConfiguration) Build'
 
