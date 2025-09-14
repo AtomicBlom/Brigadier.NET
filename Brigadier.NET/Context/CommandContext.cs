@@ -1,126 +1,142 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using Brigadier.NET.Tree;
-using Brigadier.NET.Util;
 
-namespace Brigadier.NET.Context
+namespace Brigadier.NET.Context;
+
+[PublicAPI]
+public class CommandContext<TSource> : IEquatable<CommandContext<TSource>>
 {
-	public class CommandContext<TSource> : IEquatable<CommandContext<TSource>>
+	private readonly IDictionary<string, IParsedArgument> _arguments;
+	/// <summary>
+	/// <para>
+	/// Special modifier for running this context and children. <br />
+	/// Only relevant if it's not last in chain.
+	/// </para>
+	/// <para>
+	/// Effects:
+	/// <list type="bullet">
+	/// <item><term>Exceptions from <see cref="Command"/> or <see cref="RedirectModifier"/> will be ignored</term></item>
+	/// <item><term>Result of command will be number of elements run by element in chain (instead of sum of <see cref="Command"/> results</term> </item>
+	/// 
+	/// </list>
+	/// </para>
+	/// </summary>
+	private readonly bool _forks;
+
+	public CommandContext(TSource source, string input, IDictionary<string, IParsedArgument> arguments, Command<TSource>? command, CommandNode<TSource> rootNode, List<ParsedCommandNode<TSource>> nodes, StringRange range, CommandContext<TSource>? child, RedirectModifier<TSource>? modifier, bool forks)
 	{
-		private readonly IDictionary<string, IParsedArgument> _arguments;
-		private readonly bool _forks;
+		Source = source;
+		Input = input;
+		_arguments = arguments;
+		Command = command;
+		RootNode = rootNode;
+		Nodes = nodes;
+		Range = range;
+		Child = child;
+		RedirectModifier = modifier;
+		_forks = forks;
+	}
 
-	    public CommandContext(TSource source, string input, IDictionary<string, IParsedArgument> arguments, Command<TSource> command, CommandNode<TSource> rootNode, List<ParsedCommandNode<TSource>> nodes, StringRange range, CommandContext<TSource> child, RedirectModifier<TSource> modifier, bool forks)
+	public CommandContext<TSource> CopyFor(TSource source)
+	{
+		if (Source?.Equals(source) ?? false)
 		{
-			Source = source;
-			Input = input;
-			_arguments = arguments;
-			Command = command;
-			RootNode = rootNode;
-			Nodes = nodes;
-			Range = range;
-			Child = child;
-			RedirectModifier = modifier;
-			_forks = forks;
+			return this;
 		}
+		return new CommandContext<TSource>(source, Input, _arguments, Command, RootNode, Nodes, Range, Child, RedirectModifier, _forks);
+	}
 
-		public CommandContext<TSource> CopyFor(TSource source)
+	public CommandContext<TSource>? Child { get; }
+
+	public CommandContext<TSource> LastChild
+	{
+		get
 		{
-			if (Source.Equals(source))
+			var result = this;
+			while (result.Child != null)
 			{
-				return this;
-			}
-			return new CommandContext<TSource>(source, Input, _arguments, Command, RootNode, Nodes, Range, Child, RedirectModifier, _forks);
-		}
-
-		public CommandContext<TSource> Child { get; }
-
-		public CommandContext<TSource> LastChild
-		{
-			get
-			{
-				var result = this;
-				while (result.Child != null)
-				{
-					result = result.Child;
-				}
-
-				return result;
-			}
-		}
-
-		public Command<TSource> Command { get; }
-
-		public TSource Source { get; }
-
-		public T GetArgument<T>(string name)
-		{
-			if (!_arguments.TryGetValue(name, out var argument))
-			{
-				throw new InvalidOperationException($"No such argument '{name}' exists on this command");
+				result = result.Child;
 			}
 
-			var result = argument.Result;
-
-			if (result is T v)
-			{
-				return v;
-			}
-			else
-			{
-				throw new InvalidOperationException($"Argument {name}' is defined as {result.GetType().Name}, not {typeof(T).Name}");
-			}
+			return result;
 		}
+	}
 
-		public override bool Equals(object obj)
+
+	/// <summary>Executable part of command. Will be run only when context is last in chain.</summary>
+	public Command<TSource>? Command { get; }
+
+	public TSource Source { get; }
+
+	public T GetArgument<T>(string name)
+	{
+		if (!_arguments.TryGetValue(name, out var argument))
 		{
-			if (ReferenceEquals(null, obj)) return false;
-			if (ReferenceEquals(this, obj)) return true;
-			return obj is CommandContext<TSource> other && Equals(other);
+			throw new InvalidOperationException($"No such argument '{name}' exists on this command");
 		}
 
-		public bool Equals(CommandContext<TSource> other)
+		var result = argument.Result;
+
+		if (result is T v)
 		{
-			if (ReferenceEquals(null, other)) return false;
-			if (ReferenceEquals(this, other)) return true;
-			return _arguments.SequenceEqual(other._arguments) 
-			       && Equals(RootNode, other.RootNode) 
-			       && Nodes.SequenceEqual(other.Nodes) 
-			       && Equals(Command, other.Command) 
-			       && EqualityComparer<TSource>.Default.Equals(Source, other.Source) 
-			       && Equals(Child, other.Child);
+			return v;
 		}
-
-		public override int GetHashCode()
+		else
 		{
-			return HashCode.Start
-				.Hash(Source)
-				.Hash(_arguments)
-				.Hash(Command)
-				.Hash(RootNode)
-				.Hash(Nodes)
-				.Hash(Child);
+			throw new InvalidOperationException($"Argument {name}' is defined as {result.GetType().Name}, not {typeof(T).Name}");
 		}
+	}
 
-		public RedirectModifier<TSource> RedirectModifier { get; }
+	public override bool Equals(object? obj)
+	{
+		if (ReferenceEquals(null, obj)) return false;
+		if (ReferenceEquals(this, obj)) return true;
+		return obj is CommandContext<TSource> other && Equals(other);
+	}
 
-		public StringRange Range { get; }
+	public bool Equals(CommandContext<TSource>? other)
+	{
+		if (ReferenceEquals(null, other)) return false;
+		if (ReferenceEquals(this, other)) return true;
+		return _arguments.SequenceEqual(other._arguments) 
+		       && Equals(RootNode, other.RootNode) 
+		       && Nodes.SequenceEqual(other.Nodes) 
+		       && Equals(Command, other.Command) 
+		       && EqualityComparer<TSource>.Default.Equals(Source, other.Source) 
+		       && Equals(Child, other.Child);
+	}
 
-		public string Input { get; }
+	public override int GetHashCode()
+	{
+		return HashCode.Combine(
+			Source, 
+			_arguments, 
+			Command,
+			RootNode, 
+			Nodes, 
+			Child
+		);
+	}
 
-		public CommandNode<TSource> RootNode { get; }
+	/// <summary>
+	/// Modifier of source. Will be run only when context has children (i.e. is not last in chain).
+	/// </summary>
+	public RedirectModifier<TSource>? RedirectModifier { get; }
 
-		public List<ParsedCommandNode<TSource>> Nodes { get; }
+	public StringRange Range { get; }
 
-		public bool HasNodes()
-		{
-			return Nodes.Count > 0;
-		}
+	public string Input { get; }
 
-		public bool IsForked()
-		{
-			return _forks;
-		}
+	public CommandNode<TSource> RootNode { get; }
+
+	public List<ParsedCommandNode<TSource>> Nodes { get; }
+
+	public bool HasNodes()
+	{
+		return Nodes.Count > 0;
+	}
+
+	public bool IsForked()
+	{
+		return _forks;
 	}
 }

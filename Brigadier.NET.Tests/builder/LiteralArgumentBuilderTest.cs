@@ -6,40 +6,39 @@ using FluentAssertions;
 using NSubstitute;
 using Xunit;
 
-namespace Brigadier.NET.Tests.builder
-{
-	public class LiteralArgumentBuilderTest {
-		private readonly LiteralArgumentBuilder<object> _builder;
-		private readonly Command<object> _command = Substitute.For<Command<object>>();
+namespace Brigadier.NET.Tests.builder;
 
-		public LiteralArgumentBuilderTest()
-		{
-			_builder = new LiteralArgumentBuilder<object>("foo");
-		}
+public class LiteralArgumentBuilderTest {
+	private readonly LiteralArgumentBuilder<object> _builder;
+	private readonly Command<object> _command = Substitute.For<Command<object>>();
 
-		[Fact]
-		public void TestBuild(){
-			var node = _builder.Build();
+	public LiteralArgumentBuilderTest()
+	{
+		_builder = new LiteralArgumentBuilder<object>("foo");
+	}
 
-			node.Literal.Should().Be("foo");
-		}
+	[Fact]
+	public void TestBuild(){
+		var node = _builder.Build();
 
-		[Fact]
-		public void TestBuildWithExecutor(){
-			var node = _builder.Executes(_command).Build();
+		node.Literal.Should().Be("foo");
+	}
 
-			node.Literal.Should().Be("foo");
-			node.Command.Should().Be(_command);
-		}
+	[Fact]
+	public void TestBuildWithExecutor(){
+		var node = _builder.Executes(_command).Build();
 
-		[Fact]
-		public void TestBuildWithChildren()
-		{
-			_builder.Then(r => r.Argument("bar", Arguments.Integer()));
-			_builder.Then(r => r.Argument("baz", Arguments.Integer()));
-			var node = _builder.Build();
+		node.Literal.Should().Be("foo");
+		node.Command.Should().Be(_command);
+	}
 
-			node.Children.Should().HaveCount(2);
-		}
+	[Fact]
+	public void TestBuildWithChildren()
+	{
+		_builder.Then(r => r.Argument("bar", Arguments.Integer()));
+		_builder.Then(r => r.Argument("baz", Arguments.Integer()));
+		var node = _builder.Build();
+
+		node.Children.Should().HaveCount(2);
 	}
 }

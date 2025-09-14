@@ -79,7 +79,7 @@ jobs:
       condition: and(succeeded(), eq(variables['CreateArtifacts'], 'True'))
 
     - powershell: |       
-        $fileName = "$env:BUILD_ARTIFACTSTAGINGDIRECTORY/BuildVersion"        
+        $fileName = "$env:BUILD_ARTIFACTSTAGINGDIRECTORY/BuildVersion"
         $env:RELEASEPACKAGEVERSION > $filename
       displayName: Write build version to artifacts
       condition: and(succeeded(), eq(variables['CreateArtifacts'], 'True'))

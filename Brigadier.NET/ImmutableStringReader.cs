@@ -1,25 +1,25 @@
-﻿namespace Brigadier.NET
+﻿namespace Brigadier.NET;
+
+[PublicAPI]
+public interface IImmutableStringReader
 {
-	public interface IImmutableStringReader
-	{
-		string String { get; }
+	string String { get; }
 
-		int RemainingLength { get; }
+	int RemainingLength { get; }
 
-		int TotalLength { get; }
+	int TotalLength { get; }
 
-		int Cursor { get; }
+	int Cursor { get; }
 
-		string Read { get; }
+	string Read { get; }
 
-		string Remaining { get; }
+	string Remaining { get; }
 
-		bool CanRead(int length);
+	bool CanRead(int length);
 
-		bool CanRead();
+	bool CanRead();
 
-		char Peek();
+	char Peek();
 
-		char Peek(int offset);
-	}
+	char Peek(int offset);
 }

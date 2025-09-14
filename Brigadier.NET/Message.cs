@@ -1,7 +1,7 @@
-﻿namespace Brigadier.NET
+﻿namespace Brigadier.NET;
+
+[PublicAPI]
+public interface IMessage
 {
-	public interface IMessage
-	{
-		string String { get; }
-	}
+	string String { get; }
 }

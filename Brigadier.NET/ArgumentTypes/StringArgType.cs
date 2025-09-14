@@ -1,9 +1,9 @@
-﻿namespace Brigadier.NET.ArgumentTypes
+﻿namespace Brigadier.NET.ArgumentTypes;
+
+[PublicAPI]
+public enum StringArgType
 {
-	public enum StringArgType
-	{
-		SingleWord,
-		QuotablePhrase,
-		GreedyPhrase
-	}
+	SingleWord,
+	QuotablePhrase,
+	GreedyPhrase
 }

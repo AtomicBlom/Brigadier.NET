@@ -4,7 +4,22 @@ Brigadier.NET is a port of Mojang's [brigadier](https://github.com/mojang/brigad
 
 This port is not supported by Mojang or Microsoft. For any issues, please report to [AtomicBlom/Brigadier.NET](https://www.github.com/AtomicBlom/Brigadier.NET/issues)
 
-You can use Brigadier.NET with any runtime that supports .NET Standard 1.1 or higher
+You can use Brigadier.NET with any runtime that supports .NET Standard 2.1 or higher
+
+# New in 2.0
+
+* Changed target framework to netstandard2.1
+* Updated code to Brigadier 1.3
+* Added a new EnumArgumentType (deviation from Java Brigadier)
+
+## Breaking Changes
+The ArgumentType base class has been replaced with an interface `IArgumentType<T>`, where `T` is the type that the argument will parse to.
+
+This bring it more inline with the Java version.
+
+The target framework was changed to netstandard 2.1 and previous frameworks were dropped. If you still need support for .net standard 2.0 or earlier, then I recommend you stick to the last 1.x version of brigadier.
+
+
 
 # Installation
 <!--Brigadier.NET is available from NuGet, install it via the [BrigadierNET](https://nuget.org/) NuGet package-->

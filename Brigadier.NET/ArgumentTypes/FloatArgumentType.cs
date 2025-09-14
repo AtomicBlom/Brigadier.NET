@@ -1,75 +1,68 @@
-﻿using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
-using Brigadier.NET.Context;
-using Brigadier.NET.Exceptions;
+﻿using Brigadier.NET.Exceptions;
 
-namespace Brigadier.NET.ArgumentTypes
+namespace Brigadier.NET.ArgumentTypes;
+
+[PublicAPI]
+public class FloatArgumentType : IArgumentType<float>
 {
-	public class FloatArgumentType : ArgumentType<float>
+	private static readonly IEnumerable<string> FloatExamples = ["0", "1.2", ".5", "-1", "-.5", "-1234.56"];
+
+	internal FloatArgumentType(float minimum, float maximum)
 	{
-		private static readonly IEnumerable<string> FloatExamples = new [] {"0", "1.2", ".5", "-1", "-.5", "-1234.56"};
+		Minimum = minimum;
+		Maximum = maximum;
+	}
 
-		private readonly float _minimum;
-		private readonly float _maximum;
+	public float Minimum { get; }
+	public float Maximum { get; }
 
-		internal FloatArgumentType(float minimum, float maximum)
-		{
-			_minimum = minimum;
-			_maximum = maximum;
+	/// <exception cref="CommandSyntaxException"></exception>
+	public float Parse(IStringReader reader)
+	{
+		var start = reader.Cursor;
+		var result = reader.ReadFloat();
+		if (result < Minimum) {
+			reader.Cursor = start;
+			throw CommandSyntaxException.BuiltInExceptions.FloatTooLow().CreateWithContext(reader, result, Minimum);
 		}
-
-		public float Minimum() => _minimum;
-
-		public float Maximum() => _maximum;
-
-		/// <exception cref="CommandSyntaxException"></exception>
-		public override float Parse(IStringReader reader)
-		{
-			var start = reader.Cursor;
-			var result = reader.ReadFloat();
-	        if (result < _minimum) {
-				reader.Cursor = start;
-				throw CommandSyntaxException.BuiltInExceptions.FloatTooLow().CreateWithContext(reader, result, _minimum);
-			}
-	        if (result > _maximum) {
-				reader.Cursor = start;
-				throw CommandSyntaxException.BuiltInExceptions.FloatTooHigh().CreateWithContext(reader, result, _maximum);
-			}
-	        return result;
+		if (result > Maximum) {
+			reader.Cursor = start;
+			throw CommandSyntaxException.BuiltInExceptions.FloatTooHigh().CreateWithContext(reader, result, Maximum);
 		}
+		return result;
+	}
 
-		[SuppressMessage("ReSharper", "CompareOfFloatsByEqualityOperator")]
-		public override bool Equals(object o)
+	public IEnumerable<string> Examples => FloatExamples;
+
+
+	[SuppressMessage("ReSharper", "CompareOfFloatsByEqualityOperator")]
+	public override bool Equals(object? o)
+	{
+		if (this == o) return true;
+		if (o is not FloatArgumentType that) return false;
+
+		return Maximum == that.Maximum && Minimum == that.Minimum;
+	}
+
+	public override int GetHashCode()
+	{
+		return (int)(31 * Minimum + Maximum);
+	}
+
+	[SuppressMessage("ReSharper", "CompareOfFloatsByEqualityOperator")]
+	public override string ToString()
+	{
+		if (Minimum == -float.MaxValue && Maximum == float.MaxValue)
 		{
-			if (this == o) return true;
-			if (!(o is FloatArgumentType)) return false;
-
-			var that = (FloatArgumentType)o;
-			return _maximum == that._maximum && _minimum == that._minimum;
+			return "float()";
 		}
-
-		public override int GetHashCode()
+		else if (Maximum == float.MaxValue)
 		{
-			return (int)(31 * _minimum + _maximum);
+			return $"float({Minimum:#.0})";
 		}
-
-		[SuppressMessage("ReSharper", "CompareOfFloatsByEqualityOperator")]
-		public override string ToString()
+		else
 		{
-			if (_minimum == -float.MaxValue && _maximum == float.MaxValue)
-			{
-				return "float()";
-			}
-			else if (_maximum == float.MaxValue)
-			{
-				return $"float({_minimum:#.0})";
-			}
-			else
-			{
-				return $"float({_minimum:#.0}, {_maximum:#.0})";
-			}
+			return $"float({Minimum:#.0}, {Maximum:#.0})";
 		}
-
-		public override IEnumerable<string> Examples => FloatExamples;
 	}
 }

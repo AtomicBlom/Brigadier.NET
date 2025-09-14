@@ -6,23 +6,22 @@ using FluentAssertions;
 using NSubstitute;
 using Xunit;
 
-namespace Brigadier.NET.Tests.arguments
-{
-	public class BoolArgumentTypeTest {
-		private readonly BoolArgumentType _type;
+namespace Brigadier.NET.Tests.arguments;
 
-		public BoolArgumentTypeTest()
-		{
-			_type = Arguments.Bool();
-		}
+public class BoolArgumentTypeTest {
+	private readonly BoolArgumentType _type;
 
-		[Fact]
-		public void Parse(){
-			var reader = Substitute.For<IStringReader>();
-			reader.ReadBoolean().Returns(true);
-			_type.Parse(reader).Should().Be(true);
+	public BoolArgumentTypeTest()
+	{
+		_type = Arguments.Bool();
+	}
 
-			reader.Received().ReadBoolean();
-		}
+	[Fact]
+	public void Parse(){
+		var reader = Substitute.For<IStringReader>();
+		reader.ReadBoolean().Returns(true);
+		_type.Parse(reader).Should().Be(true);
+
+		reader.Received().ReadBoolean();
 	}
 }

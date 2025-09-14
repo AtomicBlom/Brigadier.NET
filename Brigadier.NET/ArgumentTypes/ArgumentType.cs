@@ -1,21 +1,24 @@
-﻿using System.Collections.Generic;
-using System.Threading.Tasks;
-using Brigadier.NET.Context;
+﻿using Brigadier.NET.Context;
 using Brigadier.NET.Exceptions;
 using Brigadier.NET.Suggestion;
 
-namespace Brigadier.NET.ArgumentTypes
-{
-	public abstract class ArgumentType<T> 
-	{
-		/// <exception cref="CommandSyntaxException"></exception>
-		public abstract T Parse(IStringReader reader);
-		
-		public virtual Task<Suggestions> ListSuggestions<TSource>(CommandContext<TSource> context, SuggestionsBuilder builder)
-		{
-			return Suggestions.Empty();
-		}
+namespace Brigadier.NET.ArgumentTypes;
 
-		public virtual IEnumerable<string> Examples => new string[0];
+[PublicAPI]
+public interface IArgumentType<out T> 
+{
+	/// <exception cref="CommandSyntaxException"></exception>
+	T Parse(IStringReader reader);
+
+	T Parse<TSource>(StringReader reader, TSource source)
+	{
+		return Parse(reader);
 	}
+
+	Task<Suggestions> ListSuggestions<TSource>(CommandContext<TSource> context, SuggestionsBuilder builder)
+	{
+		return Suggestions.Empty();
+	}
+
+	IEnumerable<string> Examples => [];
 }

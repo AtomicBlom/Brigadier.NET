@@ -6,64 +6,63 @@ using FluentAssertions;
 using NSubstitute;
 using Xunit;
 
-namespace Brigadier.NET.Tests.arguments
-{
-	public class StringArgumentTypeTest {
+namespace Brigadier.NET.Tests.arguments;
 
-		[Fact]
-		public void TestParseWord()
-		{
-			var reader = Substitute.For<IStringReader>();
-			reader.ReadUnquotedString().Returns("hello");
-			Arguments.Word().Parse(reader).Should().BeEquivalentTo("hello");
+public class StringArgumentTypeTest {
 
-			reader.Received().ReadUnquotedString();
-		}
+	[Fact]
+	public void TestParseWord()
+	{
+		var reader = Substitute.For<IStringReader>();
+		reader.ReadUnquotedString().Returns("hello");
+		Arguments.Word().Parse(reader).Should().BeEquivalentTo("hello");
 
-		[Fact]
-		public void TestParseString(){
-			var reader = Substitute.For<IStringReader>();
-			reader.ReadString().Returns("hello world");
-			Arguments.String().Parse(reader).Should().BeEquivalentTo("hello world");
-			reader.Received().ReadString();
-		}
+		reader.Received().ReadUnquotedString();
+	}
 
-		[Fact]
-		public void TestParseGreedyString(){
-			var reader = new StringReader("Hello world! This is a test.");
-			Arguments.GreedyString().Parse(reader).Should().BeEquivalentTo("Hello world! This is a test.");
-			reader.CanRead().Should().Be(false);
-		}
+	[Fact]
+	public void TestParseString(){
+		var reader = Substitute.For<IStringReader>();
+		reader.ReadString().Returns("hello world");
+		Arguments.String().Parse(reader).Should().BeEquivalentTo("hello world");
+		reader.Received().ReadString();
+	}
 
-		[Fact]
-		public void TestToString(){
-			Arguments.String().ToString().Should().BeEquivalentTo("string()");
-		}
+	[Fact]
+	public void TestParseGreedyString(){
+		var reader = new StringReader("Hello world! This is a test.");
+		Arguments.GreedyString().Parse(reader).Should().BeEquivalentTo("Hello world! This is a test.");
+		reader.CanRead().Should().Be(false);
+	}
 
-		[Fact]
-		public void testEscapeIfRequired_notRequired(){
-			StringArgumentType.EscapeIfRequired("hello").Should().BeEquivalentTo("hello");
-			StringArgumentType.EscapeIfRequired("").Should().BeEquivalentTo("");
-		}
+	[Fact]
+	public void TestToString(){
+		Arguments.String().ToString().Should().BeEquivalentTo("string()");
+	}
 
-		[Fact]
-		public void testEscapeIfRequired_multipleWords(){
-			StringArgumentType.EscapeIfRequired("hello world").Should().BeEquivalentTo("\"hello world\"");
-		}
+	[Fact]
+	public void testEscapeIfRequired_notRequired(){
+		StringArgumentType.EscapeIfRequired("hello").Should().BeEquivalentTo("hello");
+		StringArgumentType.EscapeIfRequired("").Should().BeEquivalentTo("");
+	}
 
-		[Fact]
-		public void testEscapeIfRequired_quote(){
-			StringArgumentType.EscapeIfRequired("hello \"world\"!").Should().BeEquivalentTo("\"hello \\\"world\\\"!\"");
-		}
+	[Fact]
+	public void testEscapeIfRequired_multipleWords(){
+		StringArgumentType.EscapeIfRequired("hello world").Should().BeEquivalentTo("\"hello world\"");
+	}
 
-		[Fact]
-		public void testEscapeIfRequired_escapes(){
-			StringArgumentType.EscapeIfRequired("\\").Should().BeEquivalentTo("\"\\\\\"");
-		}
+	[Fact]
+	public void testEscapeIfRequired_quote(){
+		StringArgumentType.EscapeIfRequired("hello \"world\"!").Should().BeEquivalentTo("\"hello \\\"world\\\"!\"");
+	}
 
-		[Fact]
-		public void testEscapeIfRequired_singleQuote(){
-			StringArgumentType.EscapeIfRequired("\"").Should().BeEquivalentTo("\"\\\"\"");
-		}
+	[Fact]
+	public void testEscapeIfRequired_escapes(){
+		StringArgumentType.EscapeIfRequired("\\").Should().BeEquivalentTo("\"\\\\\"");
+	}
+
+	[Fact]
+	public void testEscapeIfRequired_singleQuote(){
+		StringArgumentType.EscapeIfRequired("\"").Should().BeEquivalentTo("\"\\\"\"");
 	}
 }
